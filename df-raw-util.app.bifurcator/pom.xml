@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>caldfir</groupId>
+    <artifactId>df-raw-util</artifactId>
+    <version>2.00.01-SNAPSHOT</version>
+  </parent>
+  <artifactId>df-raw-util.app.bifurcator</artifactId>
+  <name>df-raw-util.app.bifurcator</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <!-- directory definitions -->
+    <main.basedir>${project.parent.basedir}</main.basedir>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${apache.commons-io.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>caldfir</groupId>
+      <artifactId>df-raw-util.core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>caldfir</groupId>
+      <artifactId>df-raw-util.ui</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+  </dependencies>
+  
+  
+  <build>
+    <plugins>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>${subdirs.lib}/</classpathPrefix>
+              <mainClass>caldfir.df_raw_util.app.bifurcator.Bifurcator</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-artifact</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <version>${project.version}</version>
+                  <type>${project.packaging}</type>
+                  <destFileName>${project.name}.${project.packaging}</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${main.install}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+  
+    </plugins>
+  </build>
+    
+</project>

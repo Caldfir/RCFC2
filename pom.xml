@@ -31,7 +31,7 @@
     <!-- directory definitions -->
     <main.basedir>${project.basedir}</main.basedir>
     <main.target>${main.basedir}/${subdirs.target}</main.target>
-    <main.install>${main.target}/${subdirs.install}</main.install>
+    <main.install>${main.target}</main.install>
     <main.lib>${main.install}/${subdirs.lib}</main.lib>
     <main.etc>${main.install}/${subdirs.etc}</main.etc>
     
@@ -66,6 +66,7 @@
     <module>df-raw-util.app.organizer</module>
     <module>df-raw-util.app.formatter</module>
     <module>df-raw-util.app.stonesense-converter</module>
+    <module>df-raw-util.app.bifurcator</module>
   </modules>
 
 
