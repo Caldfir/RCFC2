@@ -10,15 +10,17 @@ import java.lang.NumberFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import caldfir.df_raw_util.core.config.CoreConfig;
 import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
-import caldfir.df_raw_util.core.relationship.RelationshipFileLookup;
+import caldfir.df_raw_util.core.relationship.FileRelationshipMap;
+import caldfir.df_raw_util.core.relationship.RelationshipMap;
 import caldfir.df_raw_util.ui.FileProgressFrame;
 
 public class StonesenseConverter {
 
-  private static final Logger LOG = LoggerFactory
-      .getLogger(StonesenseConverter.class);
+  private static final Logger LOG =
+      LoggerFactory.getLogger(StonesenseConverter.class);
 
   static final int SHEET_WIDE = 20;
 
@@ -34,7 +36,8 @@ public class StonesenseConverter {
     FileWriter writer = null;
     PrintWriter out;
     TreeBuilder t;
-    RelationshipFileLookup relFileMap = new RelationshipFileLookup();
+    CoreConfig c = new CoreConfig();
+    RelationshipMap relFileMap = c.buildRelationshipMap();
 
     try {
       display.setVisible(true);
@@ -72,9 +75,8 @@ public class StonesenseConverter {
                 // add the newly written file to the index
                 index += shortName + ".xml\n";
               } else
-                LOG.error("non-graphics file \""
-                    + shortName
-                    + ".txt\" was skipped");
+                LOG.error(
+                    "non-graphics file \"" + shortName + ".txt\" was skipped");
             } else
               LOG.error("invalid or empty file: " + shortName + ".txt");
           }
@@ -138,8 +140,9 @@ public class StonesenseConverter {
                 index = index + jump;
               }
             } else {
-              LOG.error("argument 1 was expected to be a tile page specifier: "
-                  + currentchild.toRawString());
+              LOG.error(
+                  "argument 1 was expected to be a tile page specifier: "
+                      + currentchild.toRawString());
               xml += "/>\n";
               continue;
             }
@@ -166,8 +169,9 @@ public class StonesenseConverter {
               xml += "color=\"profession\" ";
 
           } catch (NumberFormatException nfe) {
-            LOG.error("arguments 3 and 4 were expected to be integers: "
-                + currentchild.toRawString());
+            LOG.error(
+                "arguments 3 and 4 were expected to be integers: "
+                    + currentchild.toRawString());
           }
 
           xml += "/>\n";
@@ -238,10 +242,9 @@ public class StonesenseConverter {
           }
         }
         if (filename != null) {
-          filenames.put(current.getArgument(1), new GraphicsSheet(
-              filename,
-              zoom,
-              height));
+          filenames.put(
+              current.getArgument(1),
+              new GraphicsSheet(filename, zoom, height));
         }
       }
     }

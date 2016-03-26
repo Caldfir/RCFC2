@@ -11,43 +11,45 @@ import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RelationshipFileLookup extends RelationshipMap {
+public class FileRelationshipMap extends RelationshipMap {
 
-  private static final Logger LOG = LoggerFactory.getLogger(RelationshipFileLookup.class);
-  
-  private static final String TEXT_EXT = ".txt";
-  private static final String RELATIONSHIPS_DIR = "etc/relationships/";
-  private static final String REDIRECT_FILE_NAME =
-      RELATIONSHIPS_DIR + "directory" + TEXT_EXT;
+  private static final Logger LOG =
+      LoggerFactory.getLogger(FileRelationshipMap.class);
+
+  private String relationshipDirName;
+  private String relationshipFileExt;
 
   private MultiValueMap map;
   private HashMap<String, String> redirect;
 
-  public RelationshipFileLookup() {
-    map = new MultiValueMap();
-    redirect = buildRedirect();
+  public FileRelationshipMap(
+      String relationshipDirName,
+      String relationshipFileExt,
+      String redirectFileName) {
+    this.relationshipDirName = relationshipDirName;
+    this.relationshipFileExt = relationshipFileExt;
+    this.map = new MultiValueMap();
+    this.redirect = buildRedirect(redirectFileName);
   }
 
-  private HashMap<String, String> buildRedirect() {
+  private HashMap<String, String> buildRedirect(String redirectFileName) {
     HashMap<String, String> direct = new HashMap<String, String>();
     try {
-      String s;
-      FileReader f = new FileReader(REDIRECT_FILE_NAME);
+      FileReader f = new FileReader(redirectFileName);
       Scanner scn = new Scanner(f);
       Pattern pSimp =
           Pattern
               .compile("[\"]([0-9a-zA-Z_]*)[\"][ \t]*[\"]([0-9a-zA-Z_]*)[\"]");
-      Matcher mSimp;
       while (scn.hasNextLine()) {
-        s = scn.nextLine();
-        mSimp = pSimp.matcher(s);
+        String s = scn.nextLine();
+        Matcher mSimp = pSimp.matcher(s);
         if (mSimp.matches()) {
           direct.put(mSimp.group(1), mSimp.group(2));
         }
       }
       scn.close();
     } catch (FileNotFoundException e) {
-      LOG.error("could not locate " + REDIRECT_FILE_NAME);
+      LOG.error("could not locate " + redirectFileName);
     }
 
     return direct;
@@ -55,7 +57,8 @@ public class RelationshipFileLookup extends RelationshipMap {
 
   public boolean isParentOfChild(String parent, String child) {
     if (map.getCollection(parent) == null) {
-      String filename = RELATIONSHIPS_DIR + redirect.get(parent) + TEXT_EXT;
+      String filename =
+          relationshipDirName + redirect.get(parent) + relationshipFileExt;
       try {
         FileReader f = new FileReader(filename);
         Scanner scn = new Scanner(f);

@@ -17,9 +17,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import caldfir.df_raw_util.core.config.CoreConfig;
 import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
-import caldfir.df_raw_util.core.relationship.RelationshipFileLookup;
+import caldfir.df_raw_util.core.relationship.FileRelationshipMap;
+import caldfir.df_raw_util.core.relationship.RelationshipMap;
 import caldfir.df_raw_util.ui.FileProgressFrame;
 
 public class Organizer {
@@ -167,7 +169,8 @@ public class Organizer {
     display.setVisible(true);
 
     Tag libraryRoot = null;
-    RelationshipFileLookup relFileMap = new RelationshipFileLookup();
+    CoreConfig c = new CoreConfig();
+    RelationshipMap relFileMap = c.buildRelationshipMap();
     
     for (int i = 0; i < fileList.length; i++) {
 

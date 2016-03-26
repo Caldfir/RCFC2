@@ -8,9 +8,11 @@ import java.io.PrintWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import caldfir.df_raw_util.core.config.CoreConfig;
 import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
-import caldfir.df_raw_util.core.relationship.RelationshipFileLookup;
+import caldfir.df_raw_util.core.relationship.FileRelationshipMap;
+import caldfir.df_raw_util.core.relationship.RelationshipMap;
 import caldfir.df_raw_util.ui.FileProgressFrame;
 
 public class Formatter {
@@ -33,7 +35,8 @@ public class Formatter {
         new FileProgressFrame("Raw Checker", 2 * fileList.length);
     FileWriter writer = null;
     PrintWriter out;
-    RelationshipFileLookup relFileMap = new RelationshipFileLookup();
+    CoreConfig c = new CoreConfig();
+    RelationshipMap relFileMap = c.buildRelationshipMap();
 
     try {
       display.setVisible(true);
