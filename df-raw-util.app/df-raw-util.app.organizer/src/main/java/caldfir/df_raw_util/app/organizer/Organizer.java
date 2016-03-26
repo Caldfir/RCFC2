@@ -155,6 +155,9 @@ public class Organizer {
   private static Tag readTagLibrary(String srcDirName, String readableExt)
       throws IOException {
 
+    CoreConfig c = new CoreConfig();
+    RelationshipMap relFileMap = c.buildRelationshipMap();
+    
     File inDir = new File(srcDirName);
     if (!inDir.exists() || !inDir.isDirectory()) {
       LOG.error("input directory is missing: " + srcDirName);
@@ -168,8 +171,6 @@ public class Organizer {
     display.setVisible(true);
 
     Tag libraryRoot = null;
-    CoreConfig c = new CoreConfig();
-    RelationshipMap relFileMap = c.buildRelationshipMap();
     
     for (int i = 0; i < fileList.length; i++) {
 
