@@ -52,6 +52,9 @@
               <classpathPrefix>${subdirs.lib}/</classpathPrefix>
               <mainClass>caldfir.df_raw_util.app.bifurcator.Bifurcator</mainClass>
             </manifest>
+            <manifestEntries>
+              <Class-Path>.</Class-Path>
+            </manifestEntries>
           </archive>
         </configuration>
         <executions>
