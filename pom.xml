@@ -106,9 +106,9 @@
         <artifactId>maven-resources-plugin</artifactId>
         <version>2.7</version>
         <executions>
+        
           <execution>
-            <id>copy-resources</id>
-            <!-- here the phase you need -->
+            <id>copy-jars</id>
             <phase>validate</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -123,9 +123,9 @@
               </resources>
             </configuration>
           </execution>
+          
           <execution>
-            <id>copy-resources</id>
-            <!-- here the phase you need -->
+            <id>copy-configs</id>
             <phase>validate</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -140,6 +140,7 @@
               </resources>
             </configuration>
           </execution>
+          
         </executions>
       </plugin>
 
