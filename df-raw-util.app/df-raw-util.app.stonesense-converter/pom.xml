@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>caldfir</groupId>
+    <artifactId>df-raw-util.app</artifactId>
+    <version>2.00.01-SNAPSHOT</version>
+  </parent>
+  <artifactId>df-raw-util.app.stonesense-converter</artifactId>
+  <name>df-raw-util.app.stonesense-converter</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <!-- directory definitions -->
+    <main.basedir>${project.parent.parent.basedir}</main.basedir>
+    <!-- entry point for the jar -->
+    <entrypoint>caldfir.df_raw_util.app.stonesense-converter.StonesenseConverter</entrypoint>
+  </properties>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>caldfir</groupId>
+      <artifactId>df-raw-util.core</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>caldfir</groupId>
+      <artifactId>df-raw-util.ui</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+  </dependencies>
+  
+</project>
