@@ -16,9 +16,9 @@ public class CoreConfig {
 
   // property file/classpath names
   public static final String GLOBAL_RESOURCE_NAME = 
-      "daf_raw_util.properties";
+      "df_raw_util.properties";
   public static final String CORE_RESOURCE_NAME = 
-      "daf_raw_util_core.properties";
+      "df_raw_util_core.properties";
   
   // specific properties being pulled from the file
   public static final String RELATIONSHIP_DIR_NAME_PROPERTY =
@@ -28,29 +28,39 @@ public class CoreConfig {
   public static final String REDIRECT_FILE_NAME_PROPRERTY =
       "relationship.redirect";
 
-  private Properties coreProperties;
+  private final Properties coreProperties;
 
   public CoreConfig() {
-    try {
       Properties baseProps = new Properties();
-      setPropertyResource(baseProps, CORE_RESOURCE_NAME);
+      try {
+        setPropertyResource(baseProps, CORE_RESOURCE_NAME);
+      } catch (IOException e) {
+        LOG.error("problem loading core-properties");
+        LOG.error(e.toString());
+      }
+      
       Properties props = new Properties(baseProps);
-      setPropertyResource(props, GLOBAL_RESOURCE_NAME);
+      try {
+        setPropertyResource(props, GLOBAL_RESOURCE_NAME);
+      } catch (IOException e) {
+        LOG.warn("problem loading global-properties");
+        LOG.warn(e.toString());
+      }
+      
       this.coreProperties = props;
-    } catch (IOException e) {
-      LOG.error("problem loading properties");
-      LOG.error(e.toString());
-      this.coreProperties = new Properties();
-    }
   }
 
-  private static void setPropertyResource(Properties props, String resourceName)
+  private void setPropertyResource(Properties props, String resourceName)
       throws IOException {
-    InputStream stream = CoreConfig.class.getResourceAsStream(resourceName);
+    InputStream stream = getClass().getResourceAsStream(resourceName);
+    if( stream == null ){
+      throw new IOException("resource " + resourceName + " unavailable");
+    }
+    
     try {
       props.load(stream);
     } finally {
-      stream.close();
+        stream.close();
     }
   }
 
