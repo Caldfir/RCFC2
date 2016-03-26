@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.relationship.RelationshipFileLookup;
 import caldfir.df_raw_util.ui.FileProgressFrame;
 
 public class Organizer {
@@ -166,7 +167,8 @@ public class Organizer {
     display.setVisible(true);
 
     Tag libraryRoot = null;
-
+    RelationshipFileLookup relFileMap = new RelationshipFileLookup();
+    
     for (int i = 0; i < fileList.length; i++) {
 
       String iBaseName = FilenameUtils.getName(fileList[i].getName());
@@ -181,7 +183,7 @@ public class Organizer {
 
       TreeBuilder iBuildTrees = null;
       try {
-        iBuildTrees = new TreeBuilder(fileList[i].getAbsolutePath());
+        iBuildTrees = new TreeBuilder(fileList[i].getAbsolutePath(), relFileMap);
       } catch (IOException e) {
         LOG.error("unable to parse: " + iBaseName);
         continue;

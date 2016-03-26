@@ -6,28 +6,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import caldfir.df_raw_util.core.primitives.Tag;
-import caldfir.df_raw_util.core.relationship.Relationship;
+import caldfir.df_raw_util.core.relationship.RelationshipMap;
 
 public class TreeBuilder {
 
-  private static final Logger LOG = 
-      LoggerFactory.getLogger(TreeBuilder.class);
+  private static final Logger LOG = LoggerFactory.getLogger(TreeBuilder.class);
 
+  private RelationshipMap relMap;
   private TagIterator iter;
   private Tag root;
 
-  private String filename;
+  private String fileName;
 
-  public TreeBuilder(String filename) throws IOException {
-    this.filename = filename;
+  public TreeBuilder(String fileName, RelationshipMap relMap)
+      throws IOException {
+    this.fileName = fileName;
+    this.relMap = relMap;
     String extension =
-        filename.substring(filename.length() - 3, filename.length());
+        fileName.substring(fileName.length() - 3, fileName.length());
     if (extension.equals("txt")) {
-      iter = new RawIterator(filename);
+      iter = new RawIterator(fileName);
       rawBuild();
       iter.close();
     } else if (extension.equals("xml")) {
-      iter = new XIterator(filename);
+      iter = new XIterator(fileName);
       xBuild();
       iter.close();
     } else {
@@ -46,12 +48,13 @@ public class TreeBuilder {
       while (!addBranch(parentTag, childTag)) {
         parentTag = parentTag.getParent();
         if (parentTag == null) {
-          LOG.warn("unrecognized tag:\t"
-              + childTag.tagName()
-              + "\t"
-              + filename
-              + "\t"
-              + iter.getLine());
+          LOG.warn(
+              "unrecognized tag:\t"
+                  + childTag.tagName()
+                  + "\t"
+                  + fileName
+                  + "\t"
+                  + iter.getLine());
           childTag = prevTag;
           break;
         }
@@ -91,8 +94,7 @@ public class TreeBuilder {
   }
 
   private boolean addBranch(Tag parent, Tag child) {
-    Relationship r = Relationship.getInstance();
-    if (r.lookup(parent.tagName(), child.tagName())) {
+    if (relMap.isParentOfChild(parent.tagName(), child.tagName())) {
       parent.addChild(child);
       return true;
     }

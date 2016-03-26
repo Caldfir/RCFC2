@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.relationship.RelationshipFileLookup;
 import caldfir.df_raw_util.ui.FileProgressFrame;
 
 public class Formatter {
@@ -32,8 +33,7 @@ public class Formatter {
         new FileProgressFrame("Raw Checker", 2 * fileList.length);
     FileWriter writer = null;
     PrintWriter out;
-    TreeBuilder t;
-    Tag root;
+    RelationshipFileLookup relFileMap = new RelationshipFileLookup();
 
     try {
       display.setVisible(true);
@@ -50,11 +50,11 @@ public class Formatter {
           shortName = inName.substring(0, inName.length() - 4);
           extension = inName.substring(inName.length() - 3, inName.length());
           // read and parse
-          t = new TreeBuilder(SRC_FOLDER + "/" + inName);
+          TreeBuilder t = new TreeBuilder(SRC_FOLDER + "/" + inName, relFileMap);
           display.set("reading " + inName, 2 * i + 1);
           // write
           if (extension.equals("txt")) {
-            root = t.getRoot();
+            Tag root = t.getRoot();
             if (root != null) {
               output = shortName + "\n\n";
               for (int j = 0; j < root.getChildCount(); j++)

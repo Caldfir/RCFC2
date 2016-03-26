@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.relationship.RelationshipFileLookup;
 import caldfir.df_raw_util.ui.FileProgressFrame;
 
 public class StonesenseConverter {
@@ -33,6 +34,7 @@ public class StonesenseConverter {
     FileWriter writer = null;
     PrintWriter out;
     TreeBuilder t;
+    RelationshipFileLookup relFileMap = new RelationshipFileLookup();
 
     try {
       display.setVisible(true);
@@ -50,7 +52,7 @@ public class StonesenseConverter {
           shortName = inName.substring(0, inName.length() - 4);
           extension = inName.substring(inName.length() - 3, inName.length());
           // read and parse
-          t = new TreeBuilder(SRC_FOLDER + "/" + inName);
+          t = new TreeBuilder(SRC_FOLDER + "/" + inName, relFileMap);
           display.set("reading " + inName, 2 * i + 1);
           // write
           if (extension.equals("txt")) {
