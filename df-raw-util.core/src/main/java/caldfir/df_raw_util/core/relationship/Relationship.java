@@ -207,8 +207,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -218,153 +216,71 @@ import org.slf4j.LoggerFactory;
 
 public class Relationship {
 
-  private static final Logger LOG = 
-      LoggerFactory.getLogger(Relationship.class);
-  
-	private static Relationship instance;
-	private MultiValueMap map;    
-	private HashMap<String, String> redirect;
-	
-	private final ReentrantReadWriteLock rwl;
-	private final Lock r;
-	private final Lock w;
+  private static final Logger LOG = LoggerFactory.getLogger(Relationship.class);
 
-	public static Relationship getInstance() {
-		if(instance == null){
-			instance = new Relationship();
-		}
-		return instance;
-	}
+  private static final String TEXT_EXT = ".txt";
+  private static final String RELATIONSHIPS_DIR = "etc/relationships/";
+  private static final String REDIRECT_FILE_NAME =
+      RELATIONSHIPS_DIR + "directory" + TEXT_EXT;
 
-	private Relationship(){
-		map = new MultiValueMap();
-		redirect = buildRedirect();
+  private static Relationship instance;
+  private MultiValueMap map;
+  private HashMap<String, String> redirect;
 
-		rwl = new ReentrantReadWriteLock();
-		r = rwl.readLock();
-		w = rwl.writeLock();
-	}
+  public static Relationship getInstance() {
+    if (instance == null) {
+      instance = new Relationship();
+    }
+    return instance;
+  }
 
-	private HashMap<String, String> buildRedirect() {
-		HashMap<String, String> direct = new HashMap<String, String>();
-		try {
-			String s;
-			FileReader f = new FileReader("Paramaters/directory.txt");
-			Scanner scn = new Scanner(f);
-			Pattern pSimp = Pattern.compile("[\"]([0-9a-zA-Z_]*)[\"][ \t]*[\"]([0-9a-zA-Z_]*)[\"]");
-			Matcher mSimp;
-			while(scn.hasNextLine()){
-				s = scn.nextLine();
-				mSimp = pSimp.matcher(s);
-				if(mSimp.matches()){
-					direct.put(mSimp.group(1), mSimp.group(2));
-				}
-			}
-			scn.close();
-		} catch (FileNotFoundException e) {
-			LOG.error("could not locate \"Paramaters/directory.txt\"");
-		} 
-//		direct.put("ATTACK",					"ATTACK");
-//		direct.put("BODY_APPEARANCE_MODIFIER",	"BODY_APPEARANCE_MODIFIER");
-//		direct.put("BP_APPEARANCE_MODIFIER",	"BODY_APPEARANCE_MODIFIER");
-//		direct.put("BODY_DETAIL_PLAN",			"BODY_DETAIL_PLAN");
-//		direct.put("CASTE",						"CASTE");
-//		direct.put("SELECT_CASTE",				"CASTE");
-//		direct.put("COLOR",						"COLOR");
-//		direct.put("CREATURE",					"CREATURE");
-//		direct.put("CAN_DO_INTERACTION",		"CAN_DO_INTERACTION");
-//		direct.put("CE_CAN_DO_INTERACTION",		"CAN_DO_INTERACTION");
-//		direct.put("CE_BODY_TRANSFORMATION",	"CE_BODY_TRANSFORMATION");
-//		direct.put("EXTRA_BUTCHER_OBJECT",		"EXTRA_BUTCHER_OBJECT");
-//		direct.put("OBJECT",					"OBJECT");
-//		direct.put("INTERACTION",				"INTERACTION");
-//		direct.put("I_TARGET",					"I_TARGET");
-//		direct.put("I_EFFECT",					"I_EFFECT");
-//		direct.put("I_SOURCE",					"I_SOURCE");
-//		direct.put("BASIC_MAT",					"MATERIAL");
-//		direct.put("MATERIAL_TEMPLATE",			"MATERIAL");
-//		direct.put("MATERIAL",					"MATERIAL");
-//		direct.put("SELECT_MATERIAL",			"MATERIAL");
-//		direct.put("USE_MATERIAL",				"MATERIAL");
-//		direct.put("USE_MATERIAL_TEMPLATE",		"MATERIAL");
-//		direct.put("INORGANIC",					"INORGANIC");
-//		direct.put("TISSUE_LAYER",				"TISSUE_LAYER");
-//		direct.put("SELECT_TISSUE_LAYER",		"TISSUE_LAYER");
-//		direct.put("SET_TL_GROUP",				"TISSUE_LAYER");
-//		direct.put("SET_BP_GROUP",				"SET_BP_GROUP");
-//		direct.put("TISSUE_LAYER_APPEARANCE_MODIFIER","TISSUE_LAYER_APPEARANCE_MODIFIER");
-//		direct.put("TISSUE_STYLE_UNIT",			"TISSUE_STYLE_UNIT");
-//		direct.put("TISSUE_TEMPLATE",			"TISSUE");
-//		direct.put("TISSUE",					"TISSUE");
-//		direct.put("SELECT_TISSUE",				"TISSUE");
-//		direct.put("USE_TISSUE_TEMPLATE",		"TISSUE");
-//		direct.put("USE_TISSUE",				"TISSUE");
-//		direct.put("TL_COLOR_MODIFIER",			"TL_COLOR_MODIFIER");
-//		direct.put("LAYS_EGGS",					"LAYS_EGGS");
-//		direct.put("SYNDROME",					"SYNDROME");
-//		direct.put("BP",						"BP");
-//		direct.put("BODY",						"BODY");
-//		direct.put("BUILDING_FURNACE",			"BUILDING_WORKSHOP");
-//		direct.put("BUILDING_WORKSHOP",			"BUILDING_WORKSHOP");
-//		direct.put("BUILD_ITEM",				"BUILD_ITEM");
-//		direct.put("CV_CONVERT_TAG",			"CV_CONVERT_TAG");
-//		direct.put("CREATURE_VARIATION",		"CREATURE_VARIATION");
-//		direct.put("COLOR_PATTERN",				"COLOR_PATTERN");
-//		direct.put("SHAPE",						"SHAPE");
-//		direct.put("ENTITY",					"ENTITY");
-//		direct.put("WEAPON",					"WEAPON");
-//		direct.put("POSITION",					"POSITION");
-//		direct.put("TISSUE_STYLE",				"TISSUE_STYLE");
-//		direct.put("ITEM_WEAPON",				"ITEM_WEAPON");
-//		direct.put("ITEM_TOY",					"ITEM_TOY");
-//		direct.put("ITEM_TOOL",					"ITEM_TOOL");
-//		direct.put("ITEM_INSTRUMENT",			"ITEM_INSTRUMENT");
-//		direct.put("ITEM_TRAPCOMP",				"ITEM_TRAPCOMP");
-//		direct.put("ITEM_AMMO",					"ITEM_AMMO");
-//		direct.put("ITEM_SIEGEAMMO",			"ITEM_SIEGEAMMO");
-//		direct.put("ITEM_ARMOR",				"ITEM_ARMOR");
-//		direct.put("ITEM_GLOVES",				"ITEM_ARMOR");
-//		direct.put("ITEM_SHOES",				"ITEM_ARMOR");
-//		direct.put("ITEM_SHIELD",				"ITEM_ARMOR");
-//		direct.put("ITEM_HELM",					"ITEM_ARMOR");
-//		direct.put("ITEM_PANTS",				"ITEM_ARMOR");
-//		direct.put("ITEM_FOOD",					"ITEM_FOOD");
-//		direct.put("SYMBOL",					"SYMBOL");
-//		direct.put("TRANSLATION",				"TRANSLATION");
-//		direct.put("WORD",						"WORD");
-//		direct.put("NOUN",						"NOUN");
-//		direct.put("ADJ",						"ADJ");
-//		direct.put("VERB",						"VERB");
-//		direct.put("PREFIX",					"PREFIX");
-//		direct.put("PLANT",						"PLANT");
-//		direct.put("REACTION",					"REACTION");
-//		direct.put("REAGENT",					"REAGENT");
-//		direct.put("PRODUCT",					"PRODUCT");
-		return direct;
-	}
+  private Relationship() {
+    map = new MultiValueMap();
+    redirect = buildRedirect();
+  }
 
-	public boolean lookup(String parent, String child){  
-			r.lock();
-			if(map.getCollection(parent) == null){
-				try {
-					r.unlock();
-					w.lock();
-					FileReader f = new FileReader("Paramaters/" + redirect.get(parent) + ".txt");
-					Scanner scn = new Scanner(f);
-					while(scn.hasNextLine()){
-						map.put(parent, scn.nextLine());
-					}
-					scn.close();
-				} catch (FileNotFoundException e) {
-					map.put(parent, "");
-				} finally {
-					w.unlock();
-					r.lock();
-				}
-			}
-			boolean contains = map.containsValue(parent, child);
-			r.unlock();
-			return contains;
-	}
+  private HashMap<String, String> buildRedirect() {
+    HashMap<String, String> direct = new HashMap<String, String>();
+    try {
+      String s;
+      FileReader f = new FileReader(REDIRECT_FILE_NAME);
+      Scanner scn = new Scanner(f);
+      Pattern pSimp =
+          Pattern
+              .compile("[\"]([0-9a-zA-Z_]*)[\"][ \t]*[\"]([0-9a-zA-Z_]*)[\"]");
+      Matcher mSimp;
+      while (scn.hasNextLine()) {
+        s = scn.nextLine();
+        mSimp = pSimp.matcher(s);
+        if (mSimp.matches()) {
+          direct.put(mSimp.group(1), mSimp.group(2));
+        }
+      }
+      scn.close();
+    } catch (FileNotFoundException e) {
+      LOG.error("could not locate " + REDIRECT_FILE_NAME);
+    }
+
+    return direct;
+  }
+
+  public boolean lookup(String parent, String child) {
+    if (map.getCollection(parent) == null) {
+      String filename = RELATIONSHIPS_DIR + redirect.get(parent) + TEXT_EXT;
+      try {
+        FileReader f = new FileReader(filename);
+        Scanner scn = new Scanner(f);
+        while (scn.hasNextLine()) {
+          map.put(parent, scn.nextLine());
+        }
+        scn.close();
+      } catch (FileNotFoundException e) {
+        LOG.warn("could not locate " + filename);
+        map.put(parent, "");
+      }
+    }
+    boolean contains = map.containsValue(parent, child);
+    return contains;
+  }
 
 }
