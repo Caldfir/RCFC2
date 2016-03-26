@@ -16,9 +16,9 @@ public class CoreConfig {
 
   // property file/classpath names
   public static final String GLOBAL_RESOURCE_NAME = 
-      "df_raw_util.properties";
+      "/df_raw_util.properties";
   public static final String CORE_RESOURCE_NAME = 
-      "df_raw_util_core.properties";
+      "/df_raw_util_core.properties";
   
   // specific properties being pulled from the file
   public static final String RELATIONSHIP_DIR_NAME_PROPERTY =
