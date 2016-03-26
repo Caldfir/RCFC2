@@ -27,6 +27,7 @@
     <subdirs.install>install</subdirs.install>
     <subdirs.lib>lib</subdirs.lib>
     <subdirs.etc>etc</subdirs.etc>
+    <subdirs.config>config</subdirs.config>
     
     <!-- directory definitions -->
     <main.basedir>${project.basedir}</main.basedir>
@@ -116,7 +117,24 @@
               <outputDirectory>${main.etc}</outputDirectory>
               <resources>
                 <resource>
-                  <directory>src/main/etc</directory>
+                  <directory>${subdirs.etc}</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-resources</id>
+            <!-- here the phase you need -->
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${main.install}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${subdirs.config}</directory>
                   <filtering>true</filtering>
                 </resource>
               </resources>
