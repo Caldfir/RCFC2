@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import caldfir.df_raw_util.core.config.CoreConfig;
+import caldfir.df_raw_util.core.config.RelationshipConfig;
 import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
 import caldfir.df_raw_util.core.relationship.RelationshipMap;
@@ -34,7 +34,7 @@ public class Formatter {
         new FileProgressFrame("Raw Checker", 2 * fileList.length);
     FileWriter writer = null;
     PrintWriter out;
-    CoreConfig c = new CoreConfig();
+    RelationshipConfig c = new RelationshipConfig();
     RelationshipMap relFileMap = c.buildRelationshipMap();
 
     try {

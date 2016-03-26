@@ -8,7 +8,7 @@ import java.io.PrintWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import caldfir.df_raw_util.core.config.CoreConfig;
+import caldfir.df_raw_util.core.config.RelationshipConfig;
 import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
 import caldfir.df_raw_util.core.relationship.RelationshipMap;
@@ -37,7 +37,7 @@ public class Bifurcator extends javax.swing.JFrame {
     PrintWriter out;
     TreeBuilder t;
     Tag root, root1, root2;
-    CoreConfig c = new CoreConfig();
+    RelationshipConfig c = new RelationshipConfig();
     RelationshipMap relFileMap = c.buildRelationshipMap();
 
     String inName = null;

@@ -10,7 +10,7 @@ import java.lang.NumberFormatException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import caldfir.df_raw_util.core.config.CoreConfig;
+import caldfir.df_raw_util.core.config.RelationshipConfig;
 import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
 import caldfir.df_raw_util.core.relationship.RelationshipMap;
@@ -35,7 +35,7 @@ public class StonesenseConverter {
     FileWriter writer = null;
     PrintWriter out;
     TreeBuilder t;
-    CoreConfig c = new CoreConfig();
+    RelationshipConfig c = new RelationshipConfig();
     RelationshipMap relFileMap = c.buildRelationshipMap();
 
     try {

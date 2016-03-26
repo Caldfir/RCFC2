@@ -17,7 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import caldfir.df_raw_util.core.config.CoreConfig;
+import caldfir.df_raw_util.core.config.RelationshipConfig;
 import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
 import caldfir.df_raw_util.core.relationship.RelationshipMap;
@@ -155,7 +155,7 @@ public class Organizer {
   private static Tag readTagLibrary(String srcDirName, String readableExt)
       throws IOException {
 
-    CoreConfig c = new CoreConfig();
+    RelationshipConfig c = new RelationshipConfig();
     RelationshipMap relFileMap = c.buildRelationshipMap();
     
     File inDir = new File(srcDirName);
