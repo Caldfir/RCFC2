@@ -17,6 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import caldfir.df_raw_util.core.config.IOConfig;
 import caldfir.df_raw_util.core.config.RelationshipConfig;
 import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
@@ -26,9 +27,6 @@ import caldfir.df_raw_util.ui.FileProgressFrame;
 public class Organizer {
 
   private static final Logger LOG = LoggerFactory.getLogger(Organizer.class);
-
-  final static String SRC_DIR_NAME = "in";
-  final static String DST_DIR_NAME = "out";
 
   final static String READABLE_EXT = "txt";
 
@@ -49,14 +47,14 @@ public class Organizer {
       // read all the tags into a master tag library
       Tag libraryRoot = null;
       try {
-        libraryRoot = readTagLibrary(SRC_DIR_NAME, READABLE_EXT);
+        libraryRoot = readTagLibrary();
       } catch (IOException e) {
         LOG.error("problem encountered attempting to read input files");
       }
 
       // write all tags
       try {
-        populateTemplates(DST_DIR_NAME, READABLE_EXT, libraryRoot);
+        populateTemplates(libraryRoot);
       } catch (IOException e) {
         LOG.error("problem encountered attempting to write output files");
       }
@@ -69,20 +67,13 @@ public class Organizer {
   }
 
   private static void populateTemplates(
-      String dstDirName,
-      String readableExt,
       Tag libraryRoot) throws IOException {
-
+    
     TagSecondArgStringComparator tagComp = new TagSecondArgStringComparator();
     libraryRoot.sortChildren(tagComp);
 
-    File dstDir = new File(dstDirName);
-    if (!dstDir.exists() || !dstDir.isDirectory()) {
-      LOG.error("input directory is missing: " + dstDirName);
-      throw new FileNotFoundException(dstDirName);
-    }
-
-    File[] fileList = dstDir.listFiles();
+    IOConfig ioconfig = new IOConfig();
+    File[] fileList = ioconfig.listOutputFiles();
 
     FileProgressFrame display =
         new FileProgressFrame("Populating Output Files", 2 * fileList.length);
@@ -91,11 +82,10 @@ public class Organizer {
     for (int i = 0; i < fileList.length; i++) {
 
       String iBaseName = FilenameUtils.getName(fileList[i].getName());
-      String iExtension = FilenameUtils.getExtension(iBaseName);
 
       display.set("reading " + iBaseName, 2 * i);
 
-      if (!fileList[i].canRead() || !iExtension.equals(readableExt)) {
+      if (!fileList[i].canRead()) {
         LOG.info("skipped unreadable file: " + iBaseName);
         continue;
       }
@@ -152,19 +142,14 @@ public class Organizer {
     display.setVisible(false);
   }
 
-  private static Tag readTagLibrary(String srcDirName, String readableExt)
+  private static Tag readTagLibrary()
       throws IOException {
 
     RelationshipConfig c = new RelationshipConfig();
     RelationshipMap relFileMap = c.buildRelationshipMap();
-    
-    File inDir = new File(srcDirName);
-    if (!inDir.exists() || !inDir.isDirectory()) {
-      LOG.error("input directory is missing: " + srcDirName);
-      throw new FileNotFoundException(srcDirName);
-    }
 
-    File[] fileList = inDir.listFiles();
+    IOConfig ioConfig = new IOConfig();
+    File[] fileList = ioConfig.listInputFiles();
 
     FileProgressFrame display =
         new FileProgressFrame("Reading Tags", fileList.length);
@@ -175,11 +160,10 @@ public class Organizer {
     for (int i = 0; i < fileList.length; i++) {
 
       String iBaseName = FilenameUtils.getName(fileList[i].getName());
-      String iExtension = FilenameUtils.getExtension(fileList[i].getName());
 
       display.set("reading " + iBaseName, i);
 
-      if (!fileList[i].canRead() || !iExtension.equals(readableExt)) {
+      if (!fileList[i].canRead()) {
         LOG.info("skipped unreadable file: " + iBaseName);
         continue;
       }
@@ -199,7 +183,7 @@ public class Organizer {
       }
 
       if (libraryRoot == null) {
-        libraryRoot = iRootTag.clone(true);
+        libraryRoot = iRootTag.clone();
       } else {
         libraryRoot.copyChildren(iRootTag);
       }
@@ -209,7 +193,7 @@ public class Organizer {
 
     if (libraryRoot == null) {
       LOG.error("no input files contained any tags");
-      throw new IOException(srcDirName);
+      throw new IOException();
     }
 
     return libraryRoot;

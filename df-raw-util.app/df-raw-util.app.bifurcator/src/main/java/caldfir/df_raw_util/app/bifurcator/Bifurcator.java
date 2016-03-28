@@ -13,10 +13,6 @@ import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
 import caldfir.df_raw_util.core.relationship.RelationshipMap;
 
-/**
- *
- * @author Tim
- */
 public class Bifurcator extends javax.swing.JFrame {
 
   private static final Logger LOG = LoggerFactory.getLogger(Bifurcator.class);
@@ -36,7 +32,6 @@ public class Bifurcator extends javax.swing.JFrame {
     FileWriter writer = null;
     PrintWriter out;
     TreeBuilder t;
-    Tag root, root1, root2;
     RelationshipConfig c = new RelationshipConfig();
     RelationshipMap relFileMap = c.buildRelationshipMap();
 
@@ -58,11 +53,13 @@ public class Bifurcator extends javax.swing.JFrame {
         t = new TreeBuilder(SRC_FOLDER + "/" + inName, relFileMap);
 
         if (extension.equals("txt")) {
-          root = t.getRoot();
+          Tag root = t.getRoot();
           if (root != null) {
 
-            root1 = root.clone(false);
-            root2 = root.clone(false);
+            Tag root1 = new Tag();
+            root1.copyTags(root);
+            Tag root2 = new Tag();
+            root2.copyTags(root);
             output1 = shortName + "\n\n";
             output2 = shortName + "\n\n";
 
