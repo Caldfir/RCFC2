@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import caldfir.df_raw_util.core.config.RelationshipConfig;
-import caldfir.df_raw_util.core.parsers.TreeBuilder;
+import caldfir.df_raw_util.core.parse.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
 import caldfir.df_raw_util.core.relationship.RelationshipMap;
 

@@ -1,4 +1,4 @@
-package caldfir.df_raw_util.core.parsers;
+package caldfir.df_raw_util.core.parse;
 
 import caldfir.df_raw_util.core.primitives.Tag;
 
