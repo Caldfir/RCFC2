@@ -21,8 +21,8 @@
   <modules>
     <module>df-raw-util.app.organizer</module>
     <module>df-raw-util.app.formatter</module>
-    <module>df-raw-util.app.stonesense-converter</module>
-    <module>df-raw-util.app.bifurcator</module>
+    <!--module>df-raw-util.app.stonesense-converter</module-->
+    <!--module>df-raw-util.app.bifurcator</module-->
   </modules>
 
   <build>
