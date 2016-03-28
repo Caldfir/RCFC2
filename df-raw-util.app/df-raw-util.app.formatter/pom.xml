@@ -20,20 +20,4 @@
     <entrypoint>caldfir.df_raw_util.app.formatter.Formatter</entrypoint>
   </properties>
 
-  <dependencies>
-
-    <dependency>
-      <groupId>caldfir</groupId>
-      <artifactId>df-raw-util.core</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>caldfir</groupId>
-      <artifactId>df-raw-util.ui</artifactId>
-      <version>${project.parent.version}</version>
-    </dependency>
-
-  </dependencies>
-
 </project>
