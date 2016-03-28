@@ -4,7 +4,12 @@ import java.awt.GridLayout;
 
 import javax.swing.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class FileProgressFrame extends JFrame{
+  
+  private static final Logger LOG = LoggerFactory.getLogger(FileProgressFrame.class);
 
 	private static final long serialVersionUID = 1L;
 	//window dimension things
@@ -34,6 +39,7 @@ public class FileProgressFrame extends JFrame{
 	}
 	
 	public void set(String filename, int progress){
+	  LOG.debug(filename);
 		progressBar.setValue(progress);
 		currentTask.setText(filename);
 	}

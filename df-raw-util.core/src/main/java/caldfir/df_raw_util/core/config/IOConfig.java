@@ -5,8 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
+
+import org.apache.commons.io.FilenameUtils;
 
 public class IOConfig extends Config {
 
@@ -24,12 +24,22 @@ public class IOConfig extends Config {
   }
 
   public File[] listInputFiles() throws IOException {
-    Path path =
-        FileSystems.getDefault().getPath(getProperty(IO_INPUT_PROPERTY));
-    File folder = new File(path.getFileName().toString());
-    if (!folder.exists()) {
+    File folder =
+        new File(FilenameUtils.normalize(getProperty(IO_INPUT_PROPERTY)));
+    if (!folder.exists() || !folder.isDirectory()) {
       throw new IOException(
-          "directory '" + folder.getAbsolutePath() + "' does not exist");
+          "directory does not exist: " + folder.getAbsolutePath());
+    }
+
+    return folder.listFiles();
+  }
+
+  public File[] listOutputFiles() throws IOException {
+    File folder =
+        new File(FilenameUtils.normalize(getProperty(IO_OUTPUT_PROPERTY)));
+    if (!folder.exists() || !folder.isDirectory()) {
+      throw new IOException(
+          "directory does not exist: " + folder.getAbsolutePath());
     }
 
     return folder.listFiles();
@@ -48,8 +58,7 @@ public class IOConfig extends Config {
 
   private Writer buildWriter(String pathname, String basename)
       throws IOException {
-    Path path = FileSystems.getDefault().getPath(pathname, basename);
-    File toWrite = new File(path.getFileName().toString());
+    File toWrite = new File(FilenameUtils.concat(pathname, basename));
     BufferedWriter writer = new BufferedWriter(new FileWriter(toWrite));
 
     return writer;

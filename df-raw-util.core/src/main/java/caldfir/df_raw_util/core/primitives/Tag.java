@@ -1,8 +1,14 @@
 package caldfir.df_raw_util.core.primitives;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.*;
 
 import javax.swing.tree.TreeNode;
+
+import org.apache.commons.io.FilenameUtils;
 
 public class Tag implements TreeNode {
 
@@ -16,7 +22,7 @@ public class Tag implements TreeNode {
   private ArrayList<String> args;
   private byte xData;
 
-  private Tag() {
+  public Tag() {
     parent = null;
     children = new ArrayList<Tag>();
     args = new ArrayList<String>();
@@ -27,18 +33,12 @@ public class Tag implements TreeNode {
     this.args.addAll(args);
   }
 
-  public Tag clone(boolean recurse) {
-    Tag t = new Tag(args);
-
-    if (recurse) {
-      t.copyChildren(this);
-    }
+  public Tag clone() {
+    Tag t = new Tag();
+    t.copyTags(this);
+    t.copyChildren(this);
 
     return t;
-  }
-
-  public Tag clone() {
-    return clone(false);
   }
 
   public static Tag xTag(String s) {
@@ -127,29 +127,43 @@ public class Tag implements TreeNode {
   }
 
   public String toRawString() {
-    String raw = "";
+    
+    StringWriter stringWriter = new StringWriter();
+    writeRaw(stringWriter);
+    String raw = stringWriter.toString();
+    try {
+      stringWriter.close();
+    } catch (IOException e) {
+      // unrecoverable (probably impossible) state
+      throw new RuntimeException(e);
+    }
+
+    return raw;
+  }
+  
+  public void writeRaw(Writer writer) {
+    PrintWriter outWriter = new PrintWriter(writer);
 
     for (int i = 0; i < getDepth(); i++) {
-      raw += "\t";
+      outWriter.print('\t');
     }
-
-    raw += "[";
-    Iterator<String> tagIter = args.iterator();
-    while (tagIter.hasNext()) {
-      raw += tagIter.next();
-      if (tagIter.hasNext()) {
-        raw += ":";
+    
+    outWriter.print('[');
+    for( Iterator<String> it = args.iterator(); it.hasNext(); ) {
+      outWriter.print(it.next());
+      if(it.hasNext()) {
+        outWriter.print(':');
       }
     }
-    raw += "]";
-
-    if (children.size() != 0) {
-      Iterator<Tag> childIter = children.iterator();
-      while (childIter.hasNext()) {
-        raw += "\n" + childIter.next().toRawString();
-      }
+    outWriter.println(']');
+    
+    // don't close() since we don't want to release
+    outWriter.flush();
+    outWriter = null;
+    
+    for( Iterator<Tag> ci = children.iterator(); ci.hasNext(); ) {
+      ci.next().writeRaw(writer);
     }
-    return raw;
   }
 
   public String toXString() {
@@ -274,9 +288,14 @@ public class Tag implements TreeNode {
 
   public void copyChildren(Tag t) {
     for (int i = 0; i < t.getChildCount(); i++) {
-      Tag iTag = t.getChildAt(i).clone(true);
+      Tag iTag = t.getChildAt(i).clone();
       addChild(iTag);
     }
+  }
+  
+  public void copyTags(Tag t){
+    args.clear();
+    args.addAll(t.args);
   }
 
   public Tag binarySearchChildren(
@@ -293,5 +312,26 @@ public class Tag implements TreeNode {
       return children.get(index);
     }
     throw new NoSuchElementException(key.toRawString());
+  }
+
+  public void writeRawFile(String fileName, Writer writer) {
+    PrintWriter outWriter = new PrintWriter(writer);
+
+    // write the file name as the header
+    outWriter.println(FilenameUtils.getBaseName(fileName));
+    outWriter.println();
+
+    // add a list of elements in the file
+    for (int j = 0; j < getChildCount(); j++) {
+      outWriter.print('\t');
+      outWriter.println(getChildAt(j).getArgument(1));
+    }
+    outWriter.println();
+
+    writeRaw(outWriter);
+
+    // don't close() since we don't want to release
+    outWriter.flush();
+    outWriter = null;
   }
 }

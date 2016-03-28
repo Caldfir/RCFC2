@@ -1,13 +1,15 @@
 package caldfir.df_raw_util.app.formatter;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import caldfir.df_raw_util.core.config.IOConfig;
 import caldfir.df_raw_util.core.config.RelationshipConfig;
 import caldfir.df_raw_util.core.parsers.TreeBuilder;
 import caldfir.df_raw_util.core.primitives.Tag;
@@ -20,69 +22,53 @@ public class Formatter {
 
   public static void main(String[] args) {
 
-    final String SRC_FOLDER = "in";
-    final String DST_FOLDER = "out";
-
-    File folder = new File(SRC_FOLDER);
-    if( !folder.exists() ){
-      LOG.error("directory '" + folder.getAbsolutePath() + "' does not exist");
+    IOConfig ioConfig = new IOConfig();
+    File[] fileList = null;
+    try {
+      fileList = ioConfig.listInputFiles();
+    } catch (IOException e) {
+      LOG.error(e.toString());
       return;
     }
-    
-    File[] fileList = folder.listFiles();
+
+    RelationshipConfig relConfig = new RelationshipConfig();
+    RelationshipMap relFileMap = relConfig.buildRelationshipMap();
+
     FileProgressFrame display =
         new FileProgressFrame("Raw Checker", 2 * fileList.length);
-    FileWriter writer = null;
-    PrintWriter out;
-    RelationshipConfig c = new RelationshipConfig();
-    RelationshipMap relFileMap = c.buildRelationshipMap();
+    display.setVisible(true);
 
-    try {
-      display.setVisible(true);
+    for (int i = 0; i < fileList.length; i++) {
+      String shortName = FilenameUtils.getName(fileList[i].getName());
 
-      String inName = null;
-      String shortName;
-      String extension;
+      // read and parse
+      display.set("reading " + shortName, 2 * i + 1);
+      Tag root = null;
+      try {
+        TreeBuilder t = new TreeBuilder(fileList[i].getPath(), relFileMap);
+        root = t.getRoot();
+      } catch (IOException e) {
+        LOG.error(e.toString());
+        continue;
+      }
 
-      String output = "";
-
-      for (int i = 0; i < fileList.length; i++) {
+      // write
+      display.set("writing " + shortName, 2 * i);
+      Writer writer = null;
+      try {
+        writer = ioConfig.buildOutputWriter(shortName);
+        root.writeRawFile(shortName, writer);
+      } catch (IOException e) {
+        LOG.error(e.toString());
+      } finally {
         try {
-          inName = fileList[i].getName();
-          shortName = inName.substring(0, inName.length() - 4);
-          extension = inName.substring(inName.length() - 3, inName.length());
-          // read and parse
-          TreeBuilder t = new TreeBuilder(SRC_FOLDER + "/" + inName, relFileMap);
-          display.set("reading " + inName, 2 * i + 1);
-          // write
-          if (extension.equals("txt")) {
-            Tag root = t.getRoot();
-            if (root != null) {
-              output = shortName + "\n\n";
-              for (int j = 0; j < root.getChildCount(); j++)
-                output =
-                    output + "\t" + root.getChildAt(j).getArgument(1) + "\n";
-              output = output + "\n" + root.toRawString();
-
-              display.set("writing " + shortName + ".txt", 2 * i + 2);
-
-              // write
-              writer = new FileWriter(DST_FOLDER + "/" + shortName + ".txt");
-              out = new PrintWriter(writer);
-              out.print(output);
-
-              out.close();
-              writer.close();
-            } else
-              LOG.error("invalid or empty file: " + shortName + ".txt");
-          }
-        } catch (IOException e0) {
-          e0.printStackTrace();
+          writer.close();
+        } catch (Exception e) {
+          LOG.error(e.toString());
         }
       }
-      display.setVisible(false);
-    } finally {
-      System.exit(0);
     }
+    
+    display.setVisible(false);
   }
 }
