@@ -57,9 +57,9 @@ public class Bifurcator extends javax.swing.JFrame {
           if (root != null) {
 
             Tag root1 = new Tag();
-            root1.copyTags(root);
+            root1.copyArgs(root);
             Tag root2 = new Tag();
-            root2.copyTags(root);
+            root2.copyArgs(root);
             output1 = shortName + "\n\n";
             output2 = shortName + "\n\n";
 
