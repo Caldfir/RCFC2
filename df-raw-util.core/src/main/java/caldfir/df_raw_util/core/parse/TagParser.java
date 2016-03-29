@@ -81,6 +81,14 @@ public abstract class TagParser implements Closeable {
     return buildTag(tagString);
   }
 
+  protected void setNextTag(Tag nextTag) {
+    this.nextTag = nextTag;
+  }
+
+  protected void setPrevTag(Tag prevTag) {
+    this.prevTag = prevTag;
+  }
+
   /**
    * Gives the current line number in the input stream.
    */

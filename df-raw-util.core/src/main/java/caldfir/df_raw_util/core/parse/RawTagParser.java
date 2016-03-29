@@ -12,18 +12,16 @@ import caldfir.df_raw_util.core.relationship.RelationshipMap;
 public class RawTagParser extends TagParser {
 
   public static final String RAW_TAG_DELIMITER = "\\:";
-  public static final Pattern RAW_TAG_PATTERN = 
+  public static final Pattern RAW_TAG_PATTERN =
       Pattern.compile("\\[([^\\]\\[]*)\\]");
-  
+
   private RelationshipMap relMap;
-  private Tag previousTag;
 
   public RawTagParser(Reader reader, RelationshipMap relMap) {
     super(reader);
     this.relMap = relMap;
-    this.previousTag = null;
   }
-  
+
   protected Tag buildTag(String tagString) {
     Matcher m = getPattern().matcher(tagString);
     String argString = m.group(1);
@@ -37,10 +35,23 @@ public class RawTagParser extends TagParser {
     }
 
     parser.close();
-    
-    return new Tag(args);
+
+    return buildTag(args);
   }
-  
+
+  private Tag buildTag(LinkedList<String> args) {
+    Tag result = new Tag(args);
+    for (Tag before = peekPrev(); before != null; before = before.getParent()) {
+      if (relMap.isParentOfChild(before.getArgument(0), result.getArgument(0))) {
+        before.addChild(result);
+        setPrevTag(before);
+        break;
+      }
+    }
+    
+    return result;
+  }
+
   @Override
   protected Pattern getPattern() {
     return RAW_TAG_PATTERN;
