@@ -44,7 +44,6 @@ public class RawTagParser extends TagParser {
     for (Tag before = peekPrev(); before != null; before = before.getParent()) {
       if (relMap.isParentOfChild(before.getArgument(0), result.getArgument(0))) {
         before.addChild(result);
-        setPrevTag(before);
         break;
       }
     }
