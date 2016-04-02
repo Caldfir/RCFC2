@@ -1,30 +1,29 @@
 package caldfir.df_raw_util.core.primitives;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.List;
+import java.util.Vector;
 
-import javax.swing.tree.TreeNode;
-
-public class Tag implements TreeNode {
+public class Tag {
 
   private Tag parent;
-  private ArrayList<Tag> children;
+  private Vector<Tag> children;
+
   private ArrayList<String> args;
 
   public Tag() {
     parent = null;
-    children = new ArrayList<Tag>();
+    children = new Vector<Tag>();
     args = new ArrayList<String>();
   }
 
   public Tag(List<String> args) {
     this();
-    this.args.addAll(args);
+    this.copyArgs(args);
   }
 
   public Tag clone() {
@@ -35,25 +34,32 @@ public class Tag implements TreeNode {
     return t;
   }
 
-  private void setParent(Tag p) {
-    parent = p;
-  }
-
   public void addChild(Tag c) {
     children.add(c);
-    c.setParent(this);
+    c.parent = this;
+  }
+  
+  public void addChildren(Collection<Tag> cs) {
+    Iterator<Tag> it = cs.iterator();
+    while(it.hasNext()) {
+      addChild(it.next());
+    }
   }
 
-  public Tag getParent() {
-    return parent;
+  public Tag getChild(int i) {
+    return children.get(i);
   }
 
-  public String tagName() {
-    return args.get(0);
+  public int getNumChildren() {
+    return children.size();
   }
 
   public int getNumArguments() {
     return args.size();
+  }
+
+  public String tagName() {
+    return getArgument(0);
   }
 
   public String getArgument(int i) {
@@ -67,52 +73,28 @@ public class Tag implements TreeNode {
     return (short) (parent.getDepth() + 1);
   }
 
-  public Enumeration<Tag> children() {
-    class TagEnumerator implements Enumeration<Tag> {
+  public void sortChildren(Comparator<Tag> tComp) {
+    Collections.sort(children, tComp);
+  }
 
-      private ArrayList<Tag> children;
-      private int index;
+  public void copyChildren(Tag t) {
+    copyChildren(t.children);
+  }
 
-      public TagEnumerator(ArrayList<Tag> children) {
-        this.children = children;
-        index = 0;
-      }
-
-      public boolean hasMoreElements() {
-        return (index < children.size());
-      }
-
-      public Tag nextElement() {
-        return children.get(index++);
-      }
-
+  public void copyChildren(Collection<Tag> cs) {
+    Iterator<Tag> it = cs.iterator();
+    while(it.hasNext()) {
+      addChild(it.next().clone());
     }
-    return new TagEnumerator(children);
   }
-
-  @Override
-  public boolean getAllowsChildren() {
-    return true;
+  
+  public void copyArgs(Tag t){
+    copyArgs(t.args);
   }
-
-  @Override
-  public Tag getChildAt(int i) {
-    return children.get(i);
-  }
-
-  @Override
-  public int getChildCount() {
-    return children.size();
-  }
-
-  public int getIndex(TreeNode tNod) {
-    Iterator<Tag> tIter = children.iterator();
-    for (int i = 0; tIter.hasNext(); i++) {
-      if (tNod == tIter.next()) {
-        return i;
-      }
-    }
-    return -1;
+  
+  public void copyArgs(List<String> argsin) {
+    args.clear();
+    args.addAll(argsin);
   }
 
   public boolean isLeaf() {
@@ -121,29 +103,8 @@ public class Tag implements TreeNode {
     }
     return false;
   }
-
-  public void sortChildren(Comparator<Tag> tComp) {
-    Collections.sort(children, tComp);
-  }
-
-  public void copyChildren(Tag t) {
-    for (int i = 0; i < t.getChildCount(); i++) {
-      Tag iTag = t.getChildAt(i).clone();
-      addChild(iTag);
-    }
-  }
   
-  public void copyArgs(Tag t){
-    args.clear();
-    args.addAll(t.args);
-  }
-
-  public Tag binarySearchChildren(Tag key, Comparator<Tag> tComp) 
-      throws NoSuchElementException {
-    int index = Collections.binarySearch(children, key, tComp);
-    if (index >= 0 && tComp.compare(key, children.get(index)) == 0) {
-      return children.get(index);
-    }
-    throw new NoSuchElementException();
+  public Tag getParent() {
+    return parent;
   }
 }

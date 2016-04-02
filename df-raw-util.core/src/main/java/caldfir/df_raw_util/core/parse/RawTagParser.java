@@ -43,7 +43,7 @@ public class RawTagParser extends TagParser {
   private Tag buildTag(LinkedList<String> args) {
     Tag result = new Tag(args);
     for (Tag before = peekPrev(); before != null; before = before.getParent()) {
-      if (relMap.isParentOfChild(before.getArgument(0), result.getArgument(0))) {
+      if (relMap.isParentOfChild(before.tagName(), result.tagName())) {
         before.addChild(result);
         break;
       }

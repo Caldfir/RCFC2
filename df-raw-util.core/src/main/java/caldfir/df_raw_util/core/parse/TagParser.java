@@ -108,8 +108,9 @@ public abstract class TagParser implements Closeable {
   }
 
   /**
-   * Closes the
+   * Closes the underlying input.
    */
+  @Override
   public void close() throws IOException {
     in.close();
   }

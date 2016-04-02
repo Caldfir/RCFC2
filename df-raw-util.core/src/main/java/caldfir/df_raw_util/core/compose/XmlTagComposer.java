@@ -29,12 +29,12 @@ public class XmlTagComposer extends TagComposer {
     writeNewline();
 
     // recurse on children
-    for (int i = 0; i < tag.getChildCount(); i++) {
-      writeTag(tag.getChildAt(i));
+    for (int i = 0; i < tag.getNumChildren(); i++) {
+      writeTag(tag.getChild(i));
     }
 
     // write the end-tag
-    if (tag.getChildCount() > 0) {
+    if (tag.getNumChildren() > 0) {
       writeIndent(tag.getDepth());
       writeString(buildString(tag, true));
       writeNewline();
@@ -51,19 +51,19 @@ public class XmlTagComposer extends TagComposer {
     }
 
     // write the tag name
-    strWrite.write(tag.getArgument(0));
+    strWrite.write(tag.tagName());
 
     // only start-tags have arguments or a oneline marker
     if (!endTag) {
       // write the children
-      for (int i = 0; i < tag.getChildCount(); i++) {
+      for (int i = 0; i < tag.getNumChildren(); i++) {
         strWrite.write(" arg");
         strWrite.write(i);
         strWrite.write('=');
         strWrite.write(tag.getArgument(i));
       }
       // if no children then write a oneline marker
-      if (tag.getChildCount() == 0) {
+      if (tag.getNumChildren() == 0) {
         strWrite.write('/');
       }
     }

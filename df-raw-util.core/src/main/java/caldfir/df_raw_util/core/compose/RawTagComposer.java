@@ -14,13 +14,13 @@ public class RawTagComposer extends TagComposer {
 
   @Override
   public void writeHeader(Tag root) throws IOException {
-    writeString(root.getArgument(0));
+    writeString(root.tagName());
     writeNewline();
     writeNewline();
     
-    for(int i = 0; i < root.getChildCount(); i++) {
+    for(int i = 0; i < root.getNumChildren(); i++) {
       writeIndent(1);
-      writeString(root.getChildAt(i).getArgument(0));
+      writeString(root.getChild(i).tagName());
       writeNewline();
     }
     writeNewline();
@@ -34,8 +34,8 @@ public class RawTagComposer extends TagComposer {
     writeNewline();
     
     // recurse on children
-    for(int i = 0; i < tag.getChildCount(); i++) {
-      writeTag(tag.getChildAt(i));
+    for(int i = 0; i < tag.getNumChildren(); i++) {
+      writeTag(tag.getChild(i));
     }
   }
 
@@ -43,7 +43,7 @@ public class RawTagComposer extends TagComposer {
     StringWriter strWrite = new StringWriter();
     
     strWrite.write('[');
-    strWrite.write(tag.getArgument(0));
+    strWrite.write(tag.tagName());
     for(int i = 1; i < tag.getNumArguments(); i++) {
       strWrite.write(':');
       strWrite.write(tag.getArgument(i));
