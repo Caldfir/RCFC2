@@ -22,6 +22,7 @@ public class RawTagParser extends TagParser {
     this.relMap = relMap;
   }
 
+  @Override
   protected Tag buildTag(String tagString) {
     Matcher m = getPattern().matcher(tagString);
     String argString = m.group(1);

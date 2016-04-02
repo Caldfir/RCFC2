@@ -11,7 +11,7 @@ import caldfir.df_raw_util.core.primitives.Tag;
 
 public abstract class TagParser implements Closeable {
 
-  private Scanner in;
+  private final Scanner in;
   private int lineNum;
 
   private Tag nextTag;
@@ -27,6 +27,17 @@ public abstract class TagParser implements Closeable {
   protected abstract Tag buildTag(String tagString);
 
   protected abstract Pattern getPattern();
+  
+  /**
+   * Read the entire input stream, and build a hierarchy of tags from it.
+   */
+  public Tag parse() {
+    Tag root = next();
+    while( hasNext() ){
+      next();
+    }
+    return root;
+  }
 
   /**
    * Determines if the input stream contains any more Tags.
