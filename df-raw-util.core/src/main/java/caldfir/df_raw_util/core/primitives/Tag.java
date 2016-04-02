@@ -52,7 +52,7 @@ public class Tag implements TreeNode {
     return args.get(0);
   }
 
-  public int tagLength() {
+  public int getNumArguments() {
     return args.size();
   }
 
@@ -90,14 +90,17 @@ public class Tag implements TreeNode {
     return new TagEnumerator(children);
   }
 
+  @Override
   public boolean getAllowsChildren() {
     return true;
   }
 
+  @Override
   public Tag getChildAt(int i) {
     return children.get(i);
   }
 
+  @Override
   public int getChildCount() {
     return children.size();
   }

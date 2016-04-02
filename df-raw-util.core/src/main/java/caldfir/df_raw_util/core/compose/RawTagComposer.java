@@ -1,76 +1,55 @@
 package caldfir.df_raw_util.core.compose;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.Iterator;
-
-import org.apache.commons.io.FilenameUtils;
 
 import caldfir.df_raw_util.core.primitives.Tag;
 
 public class RawTagComposer extends TagComposer {
 
-
-  public static void writeRawFile(Tag tag, String fileName, Writer writer) {
-    PrintWriter outWriter = new PrintWriter(writer);
-
-    // write the file name as the header
-    outWriter.println(FilenameUtils.getBaseName(fileName));
-    outWriter.println();
-
-    // add a list of elements in the file
-    for (int j = 0; j < tag.getChildCount(); j++) {
-      outWriter.print('\t');
-      outWriter.println(tag.getChildAt(j).getArgument(1));
-    }
-    outWriter.println();
-
-    writeRaw(tag, outWriter);
-
-    // don't close() since we don't want to release
-    outWriter.flush();
-    outWriter = null;
+  public RawTagComposer(Writer writer) {
+    super(writer);
   }
 
-  public static String toRawString(Tag tag) {
+  @Override
+  public void writeHeader(Tag root) throws IOException {
+    writeString(root.getArgument(0));
+    writeNewline();
+    writeNewline();
     
-    StringWriter stringWriter = new StringWriter();
-    writeRaw(tag, stringWriter);
-    String raw = stringWriter.toString();
-    try {
-      stringWriter.close();
-    } catch (IOException e) {
-      // unrecoverable (probably impossible) state
-      throw new RuntimeException(e);
+    for(int i = 0; i < root.getChildCount(); i++) {
+      writeIndent(1);
+      writeString(root.getChildAt(i).getArgument(0));
+      writeNewline();
     }
-
-    return raw;
+    writeNewline();
   }
   
-  public static void writeRaw(Tag tag, Writer writer) {
-    PrintWriter outWriter = new PrintWriter(writer);
+  @Override
+  public void writeTag(Tag tag) throws IOException {
+    // write this tag's content
+    writeIndent(tag.getDepth());
+    writeString(buildString(tag));
+    writeNewline();
+    
+    // recurse on children
+    for(int i = 0; i < tag.getChildCount(); i++) {
+      writeTag(tag.getChildAt(i));
+    }
+  }
 
-    for (int i = 0; i < tag.getDepth(); i++) {
-      outWriter.print('\t');
-    }
+  protected String buildString(Tag tag) {
+    StringWriter strWrite = new StringWriter();
     
-    outWriter.print('[');
-    for( int i=0; i<tag. ) {
-      outWriter.print(it.next());
-      if(it.hasNext()) {
-        outWriter.print(':');
-      }
+    strWrite.write('[');
+    strWrite.write(tag.getArgument(0));
+    for(int i = 1; i < tag.getNumArguments(); i++) {
+      strWrite.write(':');
+      strWrite.write(tag.getArgument(i));
     }
-    outWriter.println(']');
+    strWrite.write(']');
     
-    // don't close() since we don't want to release
-    outWriter.flush();
-    outWriter = null;
-    
-    for( Iterator<Tag> ci = children.iterator(); ci.hasNext(); ) {
-      ci.next().writeRaw(writer);
-    }
+    return strWrite.toString();
   }
 }
