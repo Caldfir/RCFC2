@@ -22,7 +22,7 @@
     <appender-ref ref="FILE-AUDIT" />
   </logger>
 
-  <root level="error">
+  <root level="info">
     <appender-ref ref="FILE-AUDIT" />
   </root>
 
