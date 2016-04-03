@@ -1,15 +1,22 @@
 package caldfir.df_raw_util.core.parse;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.Reader;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import caldfir.df_raw_util.core.primitives.Tag;
 import caldfir.df_raw_util.core.relationship.RelationshipMap;
 
 public class RawTagParser extends TagParser {
+
+  private static final Logger LOG = LoggerFactory.getLogger(RawTagParser.class);
 
   public static final String RAW_TAG_DELIMITER = "\\:";
   public static final Pattern RAW_TAG_PATTERN =
@@ -17,15 +24,25 @@ public class RawTagParser extends TagParser {
 
   private RelationshipMap relMap;
 
+  Tag parent;
+
+  public RawTagParser(File file, RelationshipMap relMap)
+      throws FileNotFoundException {
+    super(file);
+    this.relMap = relMap;
+    this.parent = null;
+  }
+
   public RawTagParser(Reader reader, RelationshipMap relMap) {
     super(reader);
     this.relMap = relMap;
+    this.parent = null;
   }
 
   @Override
   protected Tag buildTag(String tagString) {
     Matcher m = getPattern().matcher(tagString);
-    if( !m.matches() ) {
+    if (!m.matches()) {
       return null;
     }
     String argString = m.group(1);
@@ -44,14 +61,30 @@ public class RawTagParser extends TagParser {
   }
 
   private Tag buildTag(LinkedList<String> args) {
+    // create the tag body
     Tag result = new Tag(args);
-    for (Tag before = peekPrev(); before != null; before = before.getParent()) {
+
+    // try to add this tag as a child to the previous tag or its ancestors
+    for (Tag before = parent; before != null; before = before.getParent()) {
       if (relMap.isParentOfChild(before.tagName(), result.tagName())) {
         before.addChild(result);
         break;
       }
     }
-    
+
+    // update the potential parent to be this tag
+    if(parent == null || result.getParent() != null){
+      parent = result;
+    }
+    // if we failed to add the child tag then print a message
+    else if (LOG.isWarnEnabled()) {
+      String sourceLine =
+          String.format("%1$-25s", "[" + toString() + ":" + getLineNum() + "]");
+      String unrecTag = 
+          String.format("%1$-25s", result.tagName());
+      LOG.warn("unknown tag: " + unrecTag + sourceLine);
+    }
+
     return result;
   }
 

@@ -38,10 +38,10 @@ public class FileProgressFrame extends JFrame{
 		
 	}
 	
-	public void set(String filename, int progress){
-	  LOG.debug(filename);
+	public void set(String text, int progress){
+	  LOG.debug(text);
 		progressBar.setValue(progress);
-		currentTask.setText(filename);
+		currentTask.setText(text);
 	}
 
 }

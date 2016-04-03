@@ -1,8 +1,6 @@
 package caldfir.df_raw_util.app.formatter;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Writer;
 
@@ -50,8 +48,7 @@ public class Formatter {
       Tag root = null;
       TagParser parser = null;
       try {
-        parser = new RawTagParser(
-            new BufferedReader(new FileReader(fileList[i])), relFileMap);
+        parser = new RawTagParser(fileList[i], relFileMap);
         root = parser.parse();
       } catch (IOException e) {
         LOG.error(e.toString());

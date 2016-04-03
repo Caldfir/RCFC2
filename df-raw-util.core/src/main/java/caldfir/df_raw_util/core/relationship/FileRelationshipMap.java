@@ -56,6 +56,11 @@ public class FileRelationshipMap extends RelationshipMap {
   }
 
   public boolean isParentOfChild(String parent, String child) {
+    // quit early if the redirect doesn't recognize this tag
+    if(!redirect.containsKey(parent)){
+      return false;
+    }
+    
     if (map.getCollection(parent) == null) {
       String filename =
           relationshipDirName + redirect.get(parent) + relationshipFileExt;

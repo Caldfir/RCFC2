@@ -1,8 +1,6 @@
 package caldfir.df_raw_util.app.organizer;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Iterator;
@@ -84,22 +82,21 @@ public class Organizer {
     }
 
     for (int i = 0; i < fileList.length; i++) {
-      
+
       String shortName = FilenameUtils.getName(fileList[i].getName());
       display.set("reading " + shortName, inputFileCount + i);
-      
+
       // read the template file
       TagArg1ChildFilter tagFilter =
           new TagArg1ChildFilter(readTemplate(fileList[i]));
-
 
       // try to find a tag library with matches for the template file
       Iterator<Tag> it = tagLibrary.iterator();
       Tag root = null;
       while (it.hasNext()) {
         root = tagFilter.selectMatchingChildren(it.next());
-        if (root.getNumChildren() == 0) {
-          continue;
+        if (root.getNumChildren() != 0) {
+          break;
         }
       }
 
@@ -107,8 +104,8 @@ public class Organizer {
         LOG.warn("output file has no matches: " + shortName);
         continue;
       }
-      
-      display.set("writing " + shortName, inputFileCount + i);
+
+      display.set("writing " + shortName, inputFileCount + i + 1);
 
       TagComposer composer = null;
       try {
@@ -147,16 +144,13 @@ public class Organizer {
 
       // set display
       String shortName = FilenameUtils.getName(fileList[i].getName());
-      display.set("reading " + shortName, 2 * i + 1);
+      display.set("reading " + shortName, i + 1);
 
       // read and parse
       Tag root = null;
       TagParser parser = null;
       try {
-        parser =
-            new RawTagParser(
-                new BufferedReader(new FileReader(fileList[i])),
-                relFileMap);
+        parser = new RawTagParser(fileList[i], relFileMap);
         root = parser.parse();
       } catch (IOException e) {
         LOG.error(e.toString());

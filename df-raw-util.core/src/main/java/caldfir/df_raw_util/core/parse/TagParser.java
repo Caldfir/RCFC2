@@ -1,6 +1,10 @@
 package caldfir.df_raw_util.core.parse;
 
+import java.io.BufferedReader;
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.NoSuchElementException;
@@ -11,14 +15,25 @@ import caldfir.df_raw_util.core.primitives.Tag;
 
 public abstract class TagParser implements Closeable {
 
-  private final Scanner in;
+  // used for logging purposes
+  private String sourceName;
   private int lineNum;
 
+  // data source
+  private final Scanner in;
+
+  // tag position tracking
   private Tag nextTag;
   private Tag prevTag;
 
+  public TagParser(File file) throws FileNotFoundException {
+    this(new BufferedReader(new FileReader(file)));
+    this.sourceName = file.getName();
+  }
+
   public TagParser(Reader reader) {
     this.in = new Scanner(reader);
+    this.sourceName = reader.toString();
     this.lineNum = 0;
     this.prevTag = null;
     this.nextTag = null;
@@ -27,13 +42,13 @@ public abstract class TagParser implements Closeable {
   protected abstract Tag buildTag(String tagString);
 
   protected abstract Pattern getPattern();
-  
+
   /**
    * Read the entire input stream, and build a hierarchy of tags from it.
    */
   public Tag parse() {
     Tag root = next();
-    while( hasNext() ){
+    while (hasNext()) {
       next();
     }
     return root;
@@ -82,9 +97,9 @@ public abstract class TagParser implements Closeable {
     // the loop is a bit strange because we don't want to stop parsing just
     // because we're on the last line of the file
     try {
-      while ( tag == null ) {
+      while (tag == null) {
         String found = in.findInLine(getPattern());
-        if( found != null ) {
+        if (found != null) {
           tag = buildTag(found);
           break;
         }
@@ -111,6 +126,13 @@ public abstract class TagParser implements Closeable {
    */
   public int getLineNum() {
     return lineNum;
+  }
+  
+  /**
+   * Gives a string representing the data source.
+   */
+  public String toString() {
+    return sourceName;
   }
 
   /**

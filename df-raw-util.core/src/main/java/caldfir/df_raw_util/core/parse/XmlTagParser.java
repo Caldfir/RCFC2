@@ -1,5 +1,7 @@
 package caldfir.df_raw_util.core.parse;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.Reader;
 import java.util.LinkedList;
 import java.util.Scanner;
@@ -17,6 +19,11 @@ public class XmlTagParser extends TagParser {
   
   Tag parent;
 
+  public XmlTagParser(File file) throws FileNotFoundException {
+    super(file);
+    this.parent = null;
+  }
+  
   public XmlTagParser(Reader reader) {
     super(reader);
     this.parent = null;
