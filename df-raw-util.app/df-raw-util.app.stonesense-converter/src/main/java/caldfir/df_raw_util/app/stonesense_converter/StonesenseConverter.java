@@ -114,11 +114,11 @@ public class StonesenseConverter {
     xml += "<creatures>\n";
 
     for (int i = 0; i < root.getChildCount(); i++) {
-      current = root.getChildAt(i);
+      current = root.getChild(i);
       if (current.tagName().compareTo("CREATURE_GRAPHICS") == 0) {
         xml += "\t<creature gameID=\"" + current.getArgument(1) + "\">\n";
         for (int j = 0; j < current.getChildCount(); j++) {
-          currentchild = current.getChildAt(j);
+          currentchild = current.getChild(j);
 
           xml += "\t\t<variant ";
 
@@ -154,7 +154,7 @@ public class StonesenseConverter {
               xml += "profession=\"" + currentchild.tagName() + "\" ";
             }
 
-            if (currentchild.tagLength() < 6)
+            if (currentchild.getNumArguments() < 6)
               xml += "special=\"Normal\" ";
             else if (currentchild.getArgument(5).compareTo("DEFAULT") == 0)
               xml += "special=\"Normal\" ";
@@ -163,7 +163,7 @@ public class StonesenseConverter {
             else if (currentchild.getArgument(5).compareTo("GHOST") == 0)
               xml += "special=\"Skeleton\" ";
 
-            if (currentchild.tagLength() >= 5
+            if (currentchild.getNumArguments() >= 5
                 && currentchild.getArgument(4).compareTo("ADD_COLOR") == 0)
               xml += "color=\"profession\" ";
 
@@ -209,7 +209,7 @@ public class StonesenseConverter {
 
     // load up the mapping from page descriptors to file names
     for (int i = 0; i < root.getChildCount(); i++) {
-      current = root.getChildAt(i);
+      current = root.getChild(i);
 
       if (current.tagName().compareTo("TILE_PAGE") == 0) {
 
@@ -218,7 +218,7 @@ public class StonesenseConverter {
         int height = 0;
 
         for (int j = 0; j < current.getChildCount(); j++) {
-          currentchild = current.getChildAt(j);
+          currentchild = current.getChild(j);
 
           if (currentchild.tagName().compareTo("FILE") == 0) {
             filename = currentchild.getArgument(1);

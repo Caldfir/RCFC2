@@ -66,10 +66,10 @@ public class Bifurcator extends javax.swing.JFrame {
             // display.set("bifurcating " + shortName + ".txt", i);
 
             for (int j = 0; j < root.getChildCount(); j++) {
-              if (root.getChildAt(j).hasChild(lookfor))
-                root1.addChild(root.getChildAt(j));
+              if (root.getChild(j).hasChild(lookfor))
+                root1.addChild(root.getChild(j));
               else
-                root2.addChild(root.getChildAt(j));
+                root2.addChild(root.getChild(j));
             }
 
             // display.set("writing " + shortName + ".txt", i);
@@ -77,7 +77,7 @@ public class Bifurcator extends javax.swing.JFrame {
 
               for (int j = 0; j < root1.getChildCount(); j++)
                 output1 =
-                    output1 + "\t" + root1.getChildAt(j).getArgument(1) + "\n";
+                    output1 + "\t" + root1.getChild(j).getArgument(1) + "\n";
 
               output1 = output1 + "\n" + root1.toRawString();
 
@@ -98,7 +98,7 @@ public class Bifurcator extends javax.swing.JFrame {
 
               for (int j = 0; j < root2.getChildCount(); j++)
                 output2 =
-                    output2 + "\t" + root2.getChildAt(j).getArgument(1) + "\n";
+                    output2 + "\t" + root2.getChild(j).getArgument(1) + "\n";
 
               output2 = output2 + "\n" + root2.toRawString();
 
