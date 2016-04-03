@@ -1,25 +1,26 @@
 package caldfir.df_raw_util.app.organizer;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.NoSuchElementException;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import caldfir.df_raw_util.core.compose.RawTagComposer;
+import caldfir.df_raw_util.core.compose.TagComposer;
 import caldfir.df_raw_util.core.config.IOConfig;
 import caldfir.df_raw_util.core.config.RelationshipConfig;
-import caldfir.df_raw_util.core.parse.TreeBuilder;
+import caldfir.df_raw_util.core.parse.RawTagParser;
+import caldfir.df_raw_util.core.parse.TagParser;
 import caldfir.df_raw_util.core.primitives.Tag;
 import caldfir.df_raw_util.core.relationship.RelationshipMap;
 import caldfir.df_raw_util.ui.FileProgressFrame;
@@ -28,36 +29,28 @@ public class Organizer {
 
   private static final Logger LOG = LoggerFactory.getLogger(Organizer.class);
 
-  final static String READABLE_EXT = "txt";
+  private IOConfig ioConfig;
+  private RelationshipConfig relConfig;
+  private FileProgressFrame display;
+  private int inputFileCount, outputFileCount;
 
-  private static class TagSecondArgStringComparator implements Comparator<Tag> {
-
-    public int compare(Tag t1, Tag t2) {
-      if (t1.tagLength() > 1 && t2.tagLength() > 1) {
-        return (t1.getArgument(1)).compareTo(t2.getArgument(1));
-      }
-      return t1.tagLength() - t2.tagLength();
-    }
-
+  public Organizer() {
+    this.ioConfig = new IOConfig();
+    this.relConfig = new RelationshipConfig();
+    this.inputFileCount = (int) ioConfig.countInputFiles();
+    this.outputFileCount = (int) ioConfig.countOutputFiles();
+    this.display =
+        new FileProgressFrame(
+            "Raw Organizer",
+            inputFileCount + outputFileCount);
+    display.setVisible(true);
   }
 
   public static void main(String[] args) {
 
     try {
-      // read all the tags into a master tag library
-      Tag libraryRoot = null;
-      try {
-        libraryRoot = readTagLibrary();
-      } catch (IOException e) {
-        LOG.error("problem encountered attempting to read input files");
-      }
-
-      // write all tags
-      try {
-        populateTemplates(libraryRoot);
-      } catch (IOException e) {
-        LOG.error("problem encountered attempting to write output files");
-      }
+      Organizer org = new Organizer();
+      org.populateTemplates(org.readTagLibrary());
     } catch (Throwable t) {
       LOG.error(t.toString());
       System.exit(1);
@@ -66,136 +59,123 @@ public class Organizer {
     System.exit(0);
   }
 
-  private static void populateTemplates(
-      Tag libraryRoot) throws IOException {
-    
-    TagSecondArgStringComparator tagComp = new TagSecondArgStringComparator();
-    libraryRoot.sortChildren(tagComp);
-
-    IOConfig ioconfig = new IOConfig();
-    File[] fileList = ioconfig.listOutputFiles();
-
-    FileProgressFrame display =
-        new FileProgressFrame("Populating Output Files", 2 * fileList.length);
-    display.setVisible(true);
-
-    for (int i = 0; i < fileList.length; i++) {
-
-      String iBaseName = FilenameUtils.getName(fileList[i].getName());
-
-      display.set("reading " + iBaseName, 2 * i);
-
-      if (!fileList[i].canRead()) {
-        LOG.info("skipped unreadable file: " + iBaseName);
-        continue;
-      }
-
-      List<String> iTagNames =
-          Files.readAllLines(fileList[i].toPath(), Charset.defaultCharset());
-
-      Tag iRoot = libraryRoot.clone();
-
-      ListIterator<String> iTagNamesIter = iTagNames.listIterator();
-      while (iTagNamesIter.hasNext()) {
-        String jTagName = iTagNamesIter.next().trim();
-
-        ArrayList<String> jKey = new ArrayList<String>(2);
-        jKey.add(null);
-        jKey.add(jTagName);
-        Tag jTag = null;
-        try {
-          jTag = libraryRoot.binarySearchChildren(jKey, tagComp);
-        } catch (NoSuchElementException e) {
-          LOG.warn("unable to locate element in input files: " + jTagName);
-          iTagNamesIter.remove();
-          continue;
-        }
-
-        iRoot.addChild(jTag);
-      }
-
-      display.set("writing " + iBaseName, 2 * i + 1);
-
-      FileWriter iWrite = null;
-      PrintWriter iPrint = null;
-      try {
-        iWrite = new FileWriter(fileList[i], false);
-        iPrint = new PrintWriter(iWrite);
-
-        // print stuff to the file
-        iPrint.print(iBaseName + "\n\n");
-        ListIterator<String> iTagOutIter = iTagNames.listIterator();
-        while (iTagOutIter.hasNext()) {
-          iPrint.print("\t" + iTagOutIter.next() + "\n");
-        }
-        iPrint.print("\n");
-        iPrint.print(iRoot.toRawString());
-      } catch (IOException e) {
-        LOG.error("unable to write: " + iBaseName);
-        continue;
-      } finally {
-        iWrite.close();
-        iPrint.close();
-      }
+  private Set<String> readTemplate(File file) {
+    try {
+      return Files
+          .lines(file.toPath())
+          .map(a -> a.trim())
+          .collect(Collectors.toSet());
+    } catch (IOException e) {
+      LOG.error(e.toString());
     }
 
-    display.setVisible(false);
+    return new TreeSet<String>();
   }
 
-  private static Tag readTagLibrary()
-      throws IOException {
+  public void populateTemplates(Set<Tag> tagLibrary) {
 
-    RelationshipConfig c = new RelationshipConfig();
-    RelationshipMap relFileMap = c.buildRelationshipMap();
+    File[] fileList = null;
+    try {
+      fileList = ioConfig.listOutputFiles();
+    } catch (IOException e) {
+      LOG.error(e.toString());
+      return;
+    }
 
-    IOConfig ioConfig = new IOConfig();
-    File[] fileList = ioConfig.listInputFiles();
+    for (int i = 0; i < fileList.length; i++) {
+      
+      String shortName = FilenameUtils.getName(fileList[i].getName());
+      display.set("reading " + shortName, inputFileCount + i);
+      
+      // read the template file
+      TagArg1ChildFilter tagFilter =
+          new TagArg1ChildFilter(readTemplate(fileList[i]));
 
-    FileProgressFrame display =
-        new FileProgressFrame("Reading Tags", fileList.length);
-    display.setVisible(true);
 
-    Tag libraryRoot = null;
-    
+      // try to find a tag library with matches for the template file
+      Iterator<Tag> it = tagLibrary.iterator();
+      Tag root = null;
+      while (it.hasNext()) {
+        root = tagFilter.selectMatchingChildren(it.next());
+        if (root.getNumChildren() == 0) {
+          continue;
+        }
+      }
+
+      if (root.getNumChildren() == 0) {
+        LOG.warn("output file has no matches: " + shortName);
+        continue;
+      }
+      
+      display.set("writing " + shortName, inputFileCount + i);
+
+      TagComposer composer = null;
+      try {
+        composer = new RawTagComposer(ioConfig.buildOutputWriter(shortName));
+        composer.writeHeader(root);
+        composer.writeTag(root);
+      } catch (IOException e) {
+        LOG.error(e.toString());
+      } finally {
+        try {
+          composer.close();
+        } catch (Exception e) {
+          // no-op
+        }
+      }
+
+    }
+
+  }
+
+  public Set<Tag> readTagLibrary() {
+    // temporarily use a map so we can extract elements
+    TreeMap<Tag, Tag> library = new TreeMap<Tag, Tag>(new TagArgComparator());
+
+    File[] fileList = null;
+    try {
+      fileList = ioConfig.listInputFiles();
+    } catch (IOException e) {
+      LOG.error(e.toString());
+      return library.keySet();
+    }
+
+    RelationshipMap relFileMap = relConfig.buildRelationshipMap();
+
     for (int i = 0; i < fileList.length; i++) {
 
-      String iBaseName = FilenameUtils.getName(fileList[i].getName());
+      // set display
+      String shortName = FilenameUtils.getName(fileList[i].getName());
+      display.set("reading " + shortName, 2 * i + 1);
 
-      display.set("reading " + iBaseName, i);
-
-      if (!fileList[i].canRead()) {
-        LOG.info("skipped unreadable file: " + iBaseName);
-        continue;
-      }
-
-      TreeBuilder iBuildTrees = null;
+      // read and parse
+      Tag root = null;
+      TagParser parser = null;
       try {
-        iBuildTrees = new TreeBuilder(fileList[i].getAbsolutePath(), relFileMap);
+        parser =
+            new RawTagParser(
+                new BufferedReader(new FileReader(fileList[i])),
+                relFileMap);
+        root = parser.parse();
       } catch (IOException e) {
-        LOG.error("unable to parse: " + iBaseName);
+        LOG.error(e.toString());
         continue;
+      } finally {
+        try {
+          parser.close();
+        } catch (IOException e) {
+          // no-op
+        }
       }
 
-      Tag iRootTag = iBuildTrees.getRoot();
-      if (iRootTag == null) {
-        LOG.error("parsed file model is missing: " + iBaseName);
-        continue;
-      }
-
-      if (libraryRoot == null) {
-        libraryRoot = iRootTag.clone();
+      if (library.containsKey(root)) {
+        Tag winner = library.get(root);
+        winner.copyChildren(root);
       } else {
-        libraryRoot.copyChildren(iRootTag);
+        library.put(root, root);
       }
     }
 
-    display.setVisible(false);
-
-    if (libraryRoot == null) {
-      LOG.error("no input files contained any tags");
-      throw new IOException();
-    }
-
-    return libraryRoot;
+    return library.keySet();
   }
 }
