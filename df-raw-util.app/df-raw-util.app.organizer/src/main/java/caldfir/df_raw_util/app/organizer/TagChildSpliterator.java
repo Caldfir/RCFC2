@@ -1,39 +1,46 @@
 package caldfir.df_raw_util.app.organizer;
 
-import java.util.Enumeration;
-import java.util.function.Supplier;
+import java.util.Spliterator;
+import java.util.Spliterators.AbstractSpliterator;
+import java.util.function.Consumer;
 
 import caldfir.df_raw_util.core.primitives.Tag;
 
-public class TagChildSupplier implements Supplier<Tag>, Enumeration<Tag> {
-  
+public class TagChildSpliterator extends AbstractSpliterator<Tag> {
+
   private final Tag parent;
   private int index;
 
-  public TagChildSupplier(Tag parent) {
+  public TagChildSpliterator(Tag parent) {
+    super(
+        parent.getNumChildren(),
+        Spliterator.SIZED | Spliterator.ORDERED | Spliterator.NONNULL);
     this.parent = parent;
     index = 0;
   }
-  
+
   public int numElements() {
     return parent.getNumChildren();
   }
 
-  @Override
   public Tag nextElement() {
     return parent.getChild(index++);
   }
 
-  @Override
   public boolean hasMoreElements() {
     return numElements() > index;
   }
 
   @Override
-  public Tag get() {
-    return nextElement();
+  public boolean tryAdvance(Consumer<? super Tag> action) {
+    if (hasMoreElements()) {
+      action.accept(nextElement());
+      return true;
+    }
+
+    return false;
   }
-  
+
   protected int getIndex() {
     return index;
   }
