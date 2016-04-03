@@ -13,7 +13,7 @@ public class RawTagParser extends TagParser {
 
   public static final String RAW_TAG_DELIMITER = "\\:";
   public static final Pattern RAW_TAG_PATTERN =
-      Pattern.compile("\\[([^\\]\\[]*)\\]");
+      Pattern.compile("\\[(([^\\]\\[]*))\\]");
 
   private RelationshipMap relMap;
 
@@ -25,6 +25,9 @@ public class RawTagParser extends TagParser {
   @Override
   protected Tag buildTag(String tagString) {
     Matcher m = getPattern().matcher(tagString);
+    if( !m.matches() ) {
+      return null;
+    }
     String argString = m.group(1);
 
     Scanner parser = new Scanner(argString);

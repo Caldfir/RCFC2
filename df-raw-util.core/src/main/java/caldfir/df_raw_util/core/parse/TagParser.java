@@ -82,8 +82,14 @@ public abstract class TagParser implements Closeable {
     // the loop is a bit strange because we don't want to stop parsing just
     // because we're on the last line of the file
     try {
-      for (; tag == null; in.nextLine(), lineNum++) {
-        tag = buildTag(in.findInLine(getPattern()));
+      while ( tag == null ) {
+        String found = in.findInLine(getPattern());
+        if( found != null ) {
+          tag = buildTag(found);
+          break;
+        }
+        in.nextLine();
+        lineNum++;
       }
     } catch (NoSuchElementException e) {
       return null;

@@ -25,6 +25,9 @@ public class XmlTagParser extends TagParser {
   @Override
   public Tag buildTag(String tagString) {
     Matcher elemMch = getPattern().matcher(tagString);
+    if( !elemMch.matches() ) {
+      return null;
+    }
 
     // if this is an end-tag, then just update the previous tag to its parent,
     // and don't bother creating a tag
@@ -48,7 +51,9 @@ public class XmlTagParser extends TagParser {
         break;
       }
       Matcher attrMch = attrPattern().matcher(nextArg);
-      args.add(attrMch.group(1));
+      if( attrMch.matches() ) {
+        args.add(attrMch.group(1));
+      }
     }
     attrScn.close();
 
