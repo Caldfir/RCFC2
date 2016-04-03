@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>caldfir</groupId>
   <artifactId>df-raw-util</artifactId>
-  <version>2.00.01-SNAPSHOT</version>
+  <version>2.00.02-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>df-raw-util</name>
   <url>http://maven.apache.org</url>
 
   <properties>
-  
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    
+
     <!-- dependency versions -->
     <junit.version>4.11</junit.version>
     <slf4j.version>1.7.10</slf4j.version>
     <logback.version>1.0.13</logback.version>
     <apache.commons-io.version>2.4</apache.commons-io.version>
     <apache.commons-collections.version>3.2.1</apache.commons-collections.version>
-    
+
     <!-- subdirectory definitions -->
     <subdirs.target>target</subdirs.target>
     <subdirs.install>install</subdirs.install>
@@ -28,7 +29,7 @@
     <subdirs.lib>lib</subdirs.lib>
     <subdirs.etc>etc</subdirs.etc>
     <subdirs.config>config</subdirs.config>
-    
+
     <!-- directory definitions -->
     <main.basedir>${project.basedir}</main.basedir>
     <main.src>${main.basedir}/${subdirs.src}</main.src>
@@ -36,7 +37,7 @@
     <main.install>${main.target}</main.install>
     <main.lib>${main.install}/${subdirs.lib}</main.lib>
     <main.etc>${main.install}/${subdirs.etc}</main.etc>
-    
+
   </properties>
 
   <dependencies>
@@ -59,7 +60,7 @@
       <artifactId>logback-classic</artifactId>
       <version>${logback.version}</version>
     </dependency>
-  
+
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
@@ -76,8 +77,14 @@
 
 
   <build>
-   
+
     <plugins>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>2.1</version>
+      </plugin>
 
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -99,8 +106,8 @@
             <configuration>
               <outputDirectory>${main.lib}</outputDirectory>
               <overWriteIfNewer>true</overWriteIfNewer>
-              <!--useSubDirectoryPerScope>true</useSubDirectoryPerScope-->
-              <!--stripVersion>true</stripVersion-->
+              <!--useSubDirectoryPerScope>true</useSubDirectoryPerScope -->
+              <!--stripVersion>true</stripVersion -->
             </configuration>
           </execution>
         </executions>
@@ -110,7 +117,7 @@
         <artifactId>maven-resources-plugin</artifactId>
         <version>2.7</version>
         <executions>
-        
+
           <!-- generic data goes in the etc directory -->
           <execution>
             <id>copy-etc</id>
@@ -128,7 +135,7 @@
               </resources>
             </configuration>
           </execution>
-          
+
           <!-- configs go in the base directory with the jars -->
           <execution>
             <id>copy-configs</id>
@@ -146,7 +153,7 @@
               </resources>
             </configuration>
           </execution>
-          
+
         </executions>
       </plugin>
 
