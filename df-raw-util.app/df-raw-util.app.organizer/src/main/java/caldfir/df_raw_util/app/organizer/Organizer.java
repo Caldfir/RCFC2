@@ -53,6 +53,7 @@ public class Organizer {
       org.populateTemplates(org.readTagLibrary());
     } catch (Throwable t) {
       LOG.error(t.toString());
+      t.printStackTrace();
       System.exit(1);
     }
 
