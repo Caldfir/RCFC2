@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.FilenameUtils;
 
@@ -22,21 +24,33 @@ public class IOConfig extends Config {
   public IOConfig() {
     super(CORE_RESOURCE_NAME);
   }
+  
+  public long countInputFiles() {
+    return countFiles(IO_INPUT_PROPERTY);
+  }
+  
+  public long countOutputFiles() {
+    return countFiles(IO_OUTPUT_PROPERTY);
+  }
+  
+  public long countFiles(String key) {
+    try {
+      return Files.list(Paths.get(getFileProperty(key))).count();
+    } catch (IOException e) {
+      return 0;
+    }
+  }
 
   public File[] listInputFiles() throws IOException {
-    File folder =
-        new File(FilenameUtils.normalize(getProperty(IO_INPUT_PROPERTY)));
-    if (!folder.exists() || !folder.isDirectory()) {
-      throw new IOException(
-          "directory does not exist: " + folder.getAbsolutePath());
-    }
-
-    return folder.listFiles();
+    return listFiles(IO_INPUT_PROPERTY);
   }
 
   public File[] listOutputFiles() throws IOException {
-    File folder =
-        new File(FilenameUtils.normalize(getProperty(IO_OUTPUT_PROPERTY)));
+    return listFiles(IO_OUTPUT_PROPERTY);
+  }
+
+  private File[] listFiles(String key) throws IOException {
+    File folder = new File(getFileProperty(key));
     if (!folder.exists() || !folder.isDirectory()) {
       throw new IOException(
           "directory does not exist: " + folder.getAbsolutePath());
@@ -46,14 +60,14 @@ public class IOConfig extends Config {
   }
 
   public Writer buildOutputWriter(String basename) throws IOException {
-    return buildWriter(getProperty(IO_OUTPUT_PROPERTY), basename);
+    return buildWriter(getFileProperty(IO_OUTPUT_PROPERTY), basename);
   }
 
   public Writer buildBooleanWriter(String basename, boolean success)
       throws IOException {
     String successProperty =
         success ? IO_OUTPUT_YES_PROPERTY : IO_OUTPUT_NO_PROPERTY;
-    return buildWriter(getProperty(successProperty), basename);
+    return buildWriter(getFileProperty(successProperty), basename);
   }
 
   private Writer buildWriter(String pathname, String basename)
@@ -62,5 +76,9 @@ public class IOConfig extends Config {
     BufferedWriter writer = new BufferedWriter(new FileWriter(toWrite));
 
     return writer;
+  }
+  
+  private String getFileProperty(String key) {
+    return FilenameUtils.normalize(getProperty(key));
   }
 }
