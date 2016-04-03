@@ -12,7 +12,6 @@ public class Tag {
 
   private Tag parent;
   private Vector<Tag> children;
-
   private ArrayList<String> args;
 
   public Tag() {
@@ -36,9 +35,21 @@ public class Tag {
 
   public void addChild(Tag c) {
     children.add(c);
+    if(c.parent != null) {
+      c.parent.removeChild(c);
+    }
     c.parent = this;
   }
   
+  public void removeChild(Tag c) {
+    Iterator<Tag> it = children.iterator();
+    while(it.hasNext()) {
+      if(it.next() == c){
+        it.remove();
+      }
+    }
+  }
+
   public void addChildren(Collection<Tag> cs) {
     Iterator<Tag> it = cs.iterator();
     while(it.hasNext()) {
@@ -106,5 +117,22 @@ public class Tag {
   
   public Tag getParent() {
     return parent;
+  }
+  
+  /**
+   * Equality is based on equality of all arguments.  Children are ignored.
+   */
+  public boolean equals(Tag other) {
+    if(other.getNumArguments() != this.getNumArguments()){
+      return false;
+    }
+    
+    for( int i = 0; i < this.getNumArguments(); i++ ) {
+      if(other.getArgument(i) != this.getArgument(i)) {
+        return false;
+      }
+    }
+    
+    return true;
   }
 }
