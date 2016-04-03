@@ -14,13 +14,13 @@ public class RawTagComposer extends TagComposer {
 
   @Override
   public void writeHeader(Tag root) throws IOException {
-    writeString(root.tagName());
+    writeString(root.getArgument(1));
     writeNewline();
     writeNewline();
     
     for(int i = 0; i < root.getNumChildren(); i++) {
       writeIndent(1);
-      writeString(root.getChild(i).tagName());
+      writeString(root.getChild(i).getArgument(1));
       writeNewline();
     }
     writeNewline();
