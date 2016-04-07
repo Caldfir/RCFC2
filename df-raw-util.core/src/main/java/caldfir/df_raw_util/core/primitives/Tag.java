@@ -57,6 +57,10 @@ public class Tag {
     }
   }
 
+  public void stealChildren(Tag parent) {
+    addChildren(parent.children);
+  }
+
   public Tag getChild(int i) {
     return children.get(i);
   }
@@ -88,8 +92,8 @@ public class Tag {
     Collections.sort(children, tComp);
   }
 
-  public void copyChildren(Tag t) {
-    copyChildren(t.children);
+  public void copyChildren(Tag parent) {
+    copyChildren(parent.children);
   }
 
   public void copyChildren(Collection<Tag> cs) {
