@@ -33,8 +33,8 @@ public class RawTagParser extends TagParser {
     this.parent = null;
   }
 
-  public RawTagParser(Reader reader, RelationshipMap relMap) {
-    super(reader);
+  public RawTagParser(Reader reader, RelationshipMap relMap, String sourceName) {
+    super(reader, sourceName);
     this.relMap = relMap;
     this.parent = null;
   }

@@ -66,7 +66,7 @@ public class Formatter {
       TagComposer composer = null;
       try {
         Writer w = ioConfig.buildOutputWriter(shortName);
-        composer = new RawTagComposer(w);
+        composer = new RawTagComposer(w,shortName);
         composer.compose(root);
       } catch (IOException e) {
         LOG.error(e.toString());

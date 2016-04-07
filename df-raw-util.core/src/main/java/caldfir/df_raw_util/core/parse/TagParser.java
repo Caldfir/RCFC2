@@ -27,13 +27,12 @@ public abstract class TagParser implements Closeable {
   private Tag prevTag;
 
   public TagParser(File file) throws FileNotFoundException {
-    this(new BufferedReader(new FileReader(file)));
-    this.sourceName = file.getName();
+    this(new BufferedReader(new FileReader(file)), file.getName());
   }
 
-  public TagParser(Reader reader) {
+  public TagParser(Reader reader, String sourceName) {
     this.in = new Scanner(reader);
-    this.sourceName = reader.toString();
+    this.sourceName = sourceName;
     this.lineNum = 0;
     this.prevTag = null;
     this.nextTag = null;

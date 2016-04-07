@@ -7,14 +7,17 @@ import java.io.Writer;
 import caldfir.df_raw_util.core.primitives.Tag;
 
 public class RawTagComposer extends TagComposer {
+  
+  private String headerLine;
 
-  public RawTagComposer(Writer writer) {
+  public RawTagComposer(Writer writer, String headerLine) {
     super(writer);
+    this.headerLine = headerLine;
   }
 
   @Override
   public void writeHeader(Tag root) throws IOException {
-    writeString(root.getArgument(1));
+    writeString(headerLine);
     writeNewline();
     writeNewline();
     

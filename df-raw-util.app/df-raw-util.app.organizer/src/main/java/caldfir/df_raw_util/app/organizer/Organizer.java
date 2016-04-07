@@ -49,7 +49,9 @@ public class Organizer {
 
     try {
       Organizer org = new Organizer();
-      org.populateTemplates(org.readTagLibrary());
+      Set<Tag> tagLibrary = org.readTagLibrary();
+      org.populateTemplates(tagLibrary);
+      org.writeFailures(tagLibrary);
     } catch (Throwable t) {
       LOG.error(t.toString());
       t.printStackTrace();
@@ -57,6 +59,32 @@ public class Organizer {
     }
 
     System.exit(0);
+  }
+
+  private void writeFailures(Set<Tag> tagLibrary) {
+    Iterator<Tag> it = tagLibrary.iterator();
+    while (it.hasNext()) {
+      Tag root = it.next();
+
+      String shortName = root.getArgument(1) + ".txt";
+      TagComposer composer = null;
+      try {
+        composer =
+            new RawTagComposer(
+                ioConfig.buildBooleanWriter(shortName, false),
+                shortName);
+        composer.writeHeader(root);
+        composer.writeTag(root);
+      } catch (IOException e) {
+        LOG.error(e.toString());
+      } finally {
+        try {
+          composer.close();
+        } catch (Exception e) {
+          // no-op
+        }
+      }
+    }
   }
 
   private Set<String> readTemplate(File file) {
@@ -110,7 +138,10 @@ public class Organizer {
 
       TagComposer composer = null;
       try {
-        composer = new RawTagComposer(ioConfig.buildOutputWriter(shortName));
+        composer =
+            new RawTagComposer(
+                ioConfig.buildBooleanWriter(shortName, false),
+                shortName);
         composer.writeHeader(root);
         composer.writeTag(root);
       } catch (IOException e) {

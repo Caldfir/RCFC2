@@ -24,8 +24,8 @@ public class XmlTagParser extends TagParser {
     this.parent = null;
   }
   
-  public XmlTagParser(Reader reader) {
-    super(reader);
+  public XmlTagParser(Reader reader, String sourceName) {
+    super(reader, sourceName);
     this.parent = null;
   }
 
