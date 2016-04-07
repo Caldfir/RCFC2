@@ -140,7 +140,7 @@ public class Organizer {
       try {
         composer =
             new RawTagComposer(
-                ioConfig.buildBooleanWriter(shortName, false),
+                ioConfig.buildBooleanWriter(shortName, true),
                 shortName);
         composer.writeHeader(root);
         composer.writeTag(root);
