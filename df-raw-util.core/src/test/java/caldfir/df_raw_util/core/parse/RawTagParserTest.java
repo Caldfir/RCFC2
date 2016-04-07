@@ -20,7 +20,8 @@ public class RawTagParserTest {
     RawTagParser rtp =
         new RawTagParser(
             new StringReader(RAW_ONE),
-            new BoolRelationshipMap(true));
+            new BoolRelationshipMap(true),
+            "source" );
     
     Tag tag = rtp.parse();
     
