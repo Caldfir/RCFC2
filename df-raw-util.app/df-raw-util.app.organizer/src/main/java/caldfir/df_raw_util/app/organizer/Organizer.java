@@ -13,6 +13,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import caldfir.df_raw_util.app.filter.TagArg1ChildFilter;
 import caldfir.df_raw_util.core.compose.RawTagComposer;
 import caldfir.df_raw_util.core.compose.TagComposer;
 import caldfir.df_raw_util.core.config.IOConfig;
@@ -94,7 +95,7 @@ public class Organizer {
       Iterator<Tag> it = tagLibrary.iterator();
       Tag root = null;
       while (it.hasNext()) {
-        root = tagFilter.selectMatchingChildren(it.next());
+        root = tagFilter.extractMatchingChildren(it.next());
         if (root.getNumChildren() != 0) {
           break;
         }
