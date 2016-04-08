@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.primitives.TagNode;
 import caldfir.df_raw_util.core.relationship.RelationshipMap;
 
 public class RawTagParser extends TagParser {
@@ -24,7 +24,7 @@ public class RawTagParser extends TagParser {
 
   private RelationshipMap relMap;
 
-  Tag parent;
+  TagNode parent;
 
   public RawTagParser(File file, RelationshipMap relMap)
       throws FileNotFoundException {
@@ -40,7 +40,7 @@ public class RawTagParser extends TagParser {
   }
 
   @Override
-  protected Tag buildTag(String tagString) {
+  protected TagNode buildTag(String tagString) {
     Matcher m = getPattern().matcher(tagString);
     if (!m.matches()) {
       return null;
@@ -60,12 +60,12 @@ public class RawTagParser extends TagParser {
     return buildTag(args);
   }
 
-  private Tag buildTag(LinkedList<String> args) {
+  private TagNode buildTag(LinkedList<String> args) {
     // create the tag body
-    Tag result = new Tag(args);
+    TagNode result = new TagNode(args);
 
     // try to add this tag as a child to the previous tag or its ancestors
-    for (Tag before = parent; before != null; before = before.getParent()) {
+    for (TagNode before = parent; before != null; before = before.getParent()) {
       if (relMap.isParentOfChild(before.tagName(), result.tagName())) {
         before.addChild(result);
         break;

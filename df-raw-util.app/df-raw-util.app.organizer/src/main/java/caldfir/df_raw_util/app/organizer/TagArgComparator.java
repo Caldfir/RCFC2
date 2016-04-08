@@ -2,11 +2,11 @@ package caldfir.df_raw_util.app.organizer;
 
 import java.util.Comparator;
 
-import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.primitives.TagNode;
 
-public class TagArgComparator implements Comparator<Tag> {
+public class TagArgComparator implements Comparator<TagNode> {
 
-    public int compare(Tag t1, Tag t2) {
+    public int compare(TagNode t1, TagNode t2) {
       // check pointer equality
       if( t1 == t2 ) {
         return 0;

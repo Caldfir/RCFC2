@@ -4,7 +4,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.Writer;
 
-import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.primitives.TagNode;
 
 public abstract class TagComposer implements Closeable {
 
@@ -14,11 +14,11 @@ public abstract class TagComposer implements Closeable {
     this.writer = writer;
   }
 
-  public abstract void writeHeader(Tag root) throws IOException;
+  public abstract void writeHeader(TagNode root) throws IOException;
   
-  public abstract void writeTag(Tag tag) throws IOException;
+  public abstract void writeTag(TagNode tag) throws IOException;
   
-  public void compose(Tag root) throws IOException {
+  public void compose(TagNode root) throws IOException {
     writeHeader(root);
     writeTag(root);
   }

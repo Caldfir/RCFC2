@@ -14,7 +14,7 @@ import caldfir.df_raw_util.core.config.IOConfig;
 import caldfir.df_raw_util.core.config.RelationshipConfig;
 import caldfir.df_raw_util.core.parse.RawTagParser;
 import caldfir.df_raw_util.core.parse.TagParser;
-import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.primitives.TagNode;
 import caldfir.df_raw_util.core.relationship.RelationshipMap;
 import caldfir.df_raw_util.ui.FileProgressFrame;
 
@@ -45,7 +45,7 @@ public class Formatter {
 
       // read and parse
       display.set("reading " + shortName, 2 * i + 1);
-      Tag root = null;
+      TagNode root = null;
       TagParser parser = null;
       try {
         parser = new RawTagParser(fileList[i], relFileMap);

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.primitives.TagNode;
 
 public class XmlTagComposer extends TagComposer {
 
@@ -16,13 +16,13 @@ public class XmlTagComposer extends TagComposer {
   }
   
   @Override
-  public void writeHeader(Tag root) throws IOException{
+  public void writeHeader(TagNode root) throws IOException{
     writeString(XML_HEADER);
     writeNewline();
   }
 
   @Override
-  public void writeTag(Tag tag) throws IOException {
+  public void writeTag(TagNode tag) throws IOException {
     // write the start-tag
     writeIndent(tag.getDepth());
     writeString(buildString(tag, false));
@@ -41,7 +41,7 @@ public class XmlTagComposer extends TagComposer {
     }
   }
 
-  protected String buildString(Tag tag, boolean endTag) {
+  protected String buildString(TagNode tag, boolean endTag) {
     StringWriter strWrite = new StringWriter();
     strWrite.write('<');
 

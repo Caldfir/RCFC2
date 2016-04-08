@@ -4,14 +4,14 @@ import java.util.Spliterator;
 import java.util.Spliterators.AbstractSpliterator;
 import java.util.function.Consumer;
 
-import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.primitives.TagNode;
 
-public class TagChildSpliterator extends AbstractSpliterator<Tag> {
+public class TagChildSpliterator extends AbstractSpliterator<TagNode> {
 
-  private final Tag parent;
+  private final TagNode parent;
   private int index;
 
-  public TagChildSpliterator(Tag parent) {
+  public TagChildSpliterator(TagNode parent) {
     super(
         parent.getNumChildren(),
         Spliterator.SIZED | Spliterator.ORDERED | Spliterator.NONNULL);
@@ -23,7 +23,7 @@ public class TagChildSpliterator extends AbstractSpliterator<Tag> {
     return parent.getNumChildren();
   }
 
-  public Tag nextElement() {
+  public TagNode nextElement() {
     return parent.getChild(index++);
   }
 
@@ -32,7 +32,7 @@ public class TagChildSpliterator extends AbstractSpliterator<Tag> {
   }
 
   @Override
-  public boolean tryAdvance(Consumer<? super Tag> action) {
+  public boolean tryAdvance(Consumer<? super TagNode> action) {
     if (hasMoreElements()) {
       action.accept(nextElement());
       return true;
@@ -49,7 +49,7 @@ public class TagChildSpliterator extends AbstractSpliterator<Tag> {
     this.index = index;
   }
 
-  protected Tag getParent() {
+  protected TagNode getParent() {
     return parent;
   }
 }

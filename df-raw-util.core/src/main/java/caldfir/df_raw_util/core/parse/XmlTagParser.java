@@ -8,7 +8,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.primitives.TagNode;
 
 public class XmlTagParser extends TagParser {
 
@@ -17,7 +17,7 @@ public class XmlTagParser extends TagParser {
   public static final Pattern XML_ELEMENT_PATTERN =
       Pattern.compile("<(/*)(\\w*)([^></]*)(/*)>");
   
-  Tag parent;
+  TagNode parent;
 
   public XmlTagParser(File file) throws FileNotFoundException {
     super(file);
@@ -30,7 +30,7 @@ public class XmlTagParser extends TagParser {
   }
 
   @Override
-  public Tag buildTag(String tagString) {
+  public TagNode buildTag(String tagString) {
     Matcher elemMch = getPattern().matcher(tagString);
     if( !elemMch.matches() ) {
       return null;
@@ -65,7 +65,7 @@ public class XmlTagParser extends TagParser {
     attrScn.close();
 
     // create the tag
-    Tag tag = new Tag(args);
+    TagNode tag = new TagNode(args);
     
     // add this tag to the current parent tag
     if( parent != null ){

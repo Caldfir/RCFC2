@@ -3,7 +3,7 @@ package caldfir.df_raw_util.app.filter;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.primitives.TagNode;
 
 public class TagArg1ChildFilter extends TagChildFilter {
 
@@ -14,7 +14,7 @@ public class TagArg1ChildFilter extends TagChildFilter {
   }
 
   @Override
-  protected boolean predicate(Tag child) {
+  protected boolean predicate(TagNode child) {
     try {
       return tagNames.contains(child.getArgument(1));
     } catch (NoSuchElementException e) {

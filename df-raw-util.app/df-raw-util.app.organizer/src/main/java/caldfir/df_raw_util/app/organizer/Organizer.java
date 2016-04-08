@@ -20,7 +20,7 @@ import caldfir.df_raw_util.core.config.IOConfig;
 import caldfir.df_raw_util.core.config.RelationshipConfig;
 import caldfir.df_raw_util.core.parse.RawTagParser;
 import caldfir.df_raw_util.core.parse.TagParser;
-import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.primitives.TagNode;
 import caldfir.df_raw_util.core.relationship.RelationshipMap;
 import caldfir.df_raw_util.ui.FileProgressFrame;
 
@@ -49,7 +49,7 @@ public class Organizer {
 
     try {
       Organizer org = new Organizer();
-      Set<Tag> tagLibrary = org.readTagLibrary();
+      Set<TagNode> tagLibrary = org.readTagLibrary();
       org.populateTemplates(tagLibrary);
       org.writeFailures(tagLibrary);
     } catch (Throwable t) {
@@ -61,10 +61,10 @@ public class Organizer {
     System.exit(0);
   }
 
-  private void writeFailures(Set<Tag> tagLibrary) {
-    Iterator<Tag> it = tagLibrary.iterator();
+  private void writeFailures(Set<TagNode> tagLibrary) {
+    Iterator<TagNode> it = tagLibrary.iterator();
     while (it.hasNext()) {
-      Tag root = it.next();
+      TagNode root = it.next();
 
       String shortName = root.getArgument(1) + ".txt";
       TagComposer composer = null;
@@ -100,7 +100,7 @@ public class Organizer {
     return new TreeSet<String>();
   }
 
-  public void populateTemplates(Set<Tag> tagLibrary) {
+  public void populateTemplates(Set<TagNode> tagLibrary) {
 
     File[] fileList = null;
     try {
@@ -120,8 +120,8 @@ public class Organizer {
           new TagArg1ChildFilter(readTemplate(fileList[i]));
 
       // try to find a tag library with matches for the template file
-      Iterator<Tag> it = tagLibrary.iterator();
-      Tag root = null;
+      Iterator<TagNode> it = tagLibrary.iterator();
+      TagNode root = null;
       while (it.hasNext()) {
         root = tagFilter.extractMatchingChildren(it.next());
         if (root.getNumChildren() != 0) {
@@ -158,9 +158,9 @@ public class Organizer {
 
   }
 
-  public Set<Tag> readTagLibrary() {
+  public Set<TagNode> readTagLibrary() {
     // temporarily use a map so we can extract elements
-    TreeMap<Tag, Tag> library = new TreeMap<Tag, Tag>(new TagArgComparator());
+    TreeMap<TagNode, TagNode> library = new TreeMap<TagNode, TagNode>(new TagArgComparator());
 
     File[] fileList = null;
     try {
@@ -179,7 +179,7 @@ public class Organizer {
       display.set("reading " + shortName, i + 1);
 
       // read and parse
-      Tag root = null;
+      TagNode root = null;
       TagParser parser = null;
       try {
         parser = new RawTagParser(fileList[i], relFileMap);
@@ -196,7 +196,7 @@ public class Organizer {
       }
 
       if (library.containsKey(root)) {
-        Tag winner = library.get(root);
+        TagNode winner = library.get(root);
         winner.copyChildren(root);
       } else {
         library.put(root, root);

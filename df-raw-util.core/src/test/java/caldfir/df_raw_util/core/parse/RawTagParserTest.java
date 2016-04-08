@@ -7,7 +7,7 @@ import java.io.StringReader;
 
 import org.junit.Test;
 
-import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.primitives.TagNode;
 import caldfir.df_raw_util.core.relationship.BoolRelationshipMap;
 
 public class RawTagParserTest {
@@ -23,7 +23,7 @@ public class RawTagParserTest {
             new BoolRelationshipMap(true),
             "source" );
     
-    Tag tag = rtp.parse();
+    TagNode tag = rtp.parse();
     
     try {
       rtp.close();

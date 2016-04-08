@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.primitives.TagNode;
 
 public abstract class TagParser implements Closeable {
 
@@ -23,8 +23,8 @@ public abstract class TagParser implements Closeable {
   private final Scanner in;
 
   // tag position tracking
-  private Tag nextTag;
-  private Tag prevTag;
+  private TagNode nextTag;
+  private TagNode prevTag;
 
   public TagParser(File file) throws FileNotFoundException {
     this(new BufferedReader(new FileReader(file)), file.getName());
@@ -38,15 +38,15 @@ public abstract class TagParser implements Closeable {
     this.nextTag = null;
   }
 
-  protected abstract Tag buildTag(String tagString);
+  protected abstract TagNode buildTag(String tagString);
 
   protected abstract Pattern getPattern();
 
   /**
    * Read the entire input stream, and build a hierarchy of tags from it.
    */
-  public Tag parse() {
-    Tag root = next();
+  public TagNode parse() {
+    TagNode root = next();
     while (hasNext()) {
       next();
     }
@@ -63,7 +63,7 @@ public abstract class TagParser implements Closeable {
   /**
    * Gives the value of the subsequent call to next().
    */
-  public Tag peekNext() {
+  public TagNode peekNext() {
     if (nextTag == null) {
       nextTag = readTag();
     }
@@ -74,14 +74,14 @@ public abstract class TagParser implements Closeable {
   /**
    * Gives the value of the previous call to next().
    */
-  public Tag peekPrev() {
+  public TagNode peekPrev() {
     return prevTag;
   }
 
   /**
    * Obtains the next tag, and updates the position.
    */
-  public Tag next() {
+  public TagNode next() {
     prevTag = peekNext();
     nextTag = null;
 
@@ -91,8 +91,8 @@ public abstract class TagParser implements Closeable {
   /**
    * Obtains the next tag from the input stream.
    */
-  protected Tag readTag() {
-    Tag tag = null;
+  protected TagNode readTag() {
+    TagNode tag = null;
     // the loop is a bit strange because we don't want to stop parsing just
     // because we're on the last line of the file
     try {
@@ -112,11 +112,11 @@ public abstract class TagParser implements Closeable {
     return tag;
   }
 
-  protected void setNextTag(Tag nextTag) {
+  protected void setNextTag(TagNode nextTag) {
     this.nextTag = nextTag;
   }
 
-  protected void setPrevTag(Tag prevTag) {
+  protected void setPrevTag(TagNode prevTag) {
     this.prevTag = prevTag;
   }
 

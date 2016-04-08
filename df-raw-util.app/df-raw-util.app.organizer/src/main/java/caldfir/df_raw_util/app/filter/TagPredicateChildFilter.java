@@ -2,18 +2,18 @@ package caldfir.df_raw_util.app.filter;
 
 import java.util.function.Predicate;
 
-import caldfir.df_raw_util.core.primitives.Tag;
+import caldfir.df_raw_util.core.primitives.TagNode;
 
 public class TagPredicateChildFilter extends TagChildFilter {
 
-  private Predicate<Tag> predicate;
+  private Predicate<TagNode> predicate;
   
-  public TagPredicateChildFilter( Predicate<Tag> predicate ) {
+  public TagPredicateChildFilter( Predicate<TagNode> predicate ) {
     this.predicate = predicate;
   }
   
   @Override
-  protected boolean predicate(Tag child) {
+  protected boolean predicate(TagNode child) {
     return predicate.test(child);
   }
 
