@@ -3,7 +3,6 @@ package caldfir.df_raw_util.app.filter;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.TreeSet;
 
 import org.junit.Before;
