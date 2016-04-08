@@ -96,7 +96,7 @@ public class Organizer {
     } catch (IOException e) {
       LOG.error(e.toString());
     }
-
+    
     return new TreeSet<String>();
   }
 
@@ -116,8 +116,11 @@ public class Organizer {
       display.set("reading " + shortName, inputFileCount + i);
 
       // read the template file
-      TagArg1ChildFilter tagFilter =
-          new TagArg1ChildFilter(readTemplate(fileList[i]));
+      Set<String> template = readTemplate(fileList[i]);
+      LOG.info(template.stream().collect(Collectors.joining(",")));
+      LOG.debug(fileList[i].getName() + "::" + template.size());
+      TagArg1ChildFilter tagFilter = 
+          new TagArg1ChildFilter(template);
 
       // try to find a tag library with matches for the template file
       Iterator<TagNode> it = tagLibrary.iterator();
@@ -128,6 +131,8 @@ public class Organizer {
           break;
         }
       }
+      
+      LOG.debug(root.getArgument(1) + "::" + root.getNumChildren());
 
       if (root.getNumChildren() == 0) {
         LOG.warn("output file has no matches: " + shortName);
