@@ -11,6 +11,17 @@ import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * The FileRelationshipMap class is a dictionary of allowed parent-child
+ * relationships defined by a set of files. These consist of one <i>redirect</i>
+ * file, along with a directory containing any number of <i>relationship-map</i>
+ * files.
+ * 
+ * The redirect file maps potential parent strings to the names of
+ * relationship-map files. The relationship-map files are simple lists of
+ * potential children for the given parent. In this way, multiple parent strings
+ * may all use a single map file if.
+ */
 public class FileRelationshipMap extends RelationshipMap {
 
   private static final Logger LOG =
@@ -55,12 +66,13 @@ public class FileRelationshipMap extends RelationshipMap {
     return direct;
   }
 
+  @Override
   public boolean isParentOfChild(String parent, String child) {
     // quit early if the redirect doesn't recognize this tag
-    if(!redirect.containsKey(parent)){
+    if (!redirect.containsKey(parent)) {
       return false;
     }
-    
+
     if (map.getCollection(parent) == null) {
       String filename =
           relationshipDirName + redirect.get(parent) + relationshipFileExt;
