@@ -52,4 +52,13 @@ public class TagArg1ChildFilterTest {
     assertTrue(testNode.getNumChildren() == 0);
   }
 
+  @Test
+  public void testCopy() {
+    TagArg1ChildFilter filter = new TagArg1ChildFilter(template);
+    TagNode out = filter.copyMatchingChildren(testNode);
+
+    assertTrue(out.getNumChildren() == 3);
+    assertTrue(testNode.getNumChildren() == 3);
+  }
+
 }
