@@ -138,6 +138,7 @@ public class Organizer {
       display.set("writing " + shortName, inputFileCount + i + 1);
 
       TagComposer composer = null;
+      root.sortChildren(new TagArgComparator());
       try {
         composer =
             new RawTagComposer(
