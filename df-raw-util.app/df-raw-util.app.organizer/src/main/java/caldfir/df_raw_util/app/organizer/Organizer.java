@@ -117,8 +117,6 @@ public class Organizer {
 
       // read the template file
       Set<String> template = readTemplate(fileList[i]);
-      LOG.info(template.stream().collect(Collectors.joining(",")));
-      LOG.debug(fileList[i].getName() + "::" + template.size());
       TagArg1ChildFilter tagFilter = 
           new TagArg1ChildFilter(template);
 
@@ -131,8 +129,6 @@ public class Organizer {
           break;
         }
       }
-      
-      LOG.debug(root.getArgument(1) + "::" + root.getNumChildren());
 
       if (root.getNumChildren() == 0) {
         LOG.warn("output file has no matches: " + shortName);
