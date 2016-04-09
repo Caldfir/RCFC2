@@ -65,9 +65,15 @@ public class Organizer {
     Iterator<TagNode> it = tagLibrary.iterator();
     while (it.hasNext()) {
       TagNode root = it.next();
+      
+      // don't write empty files
+      if( root.getNumChildren() == 0 ){
+        continue;
+      }
 
       String shortName = root.getArgument(1) + ".txt";
       TagComposer composer = null;
+      root.sortChildren(new TagArgComparator());
       try {
         composer =
             new RawTagComposer(
