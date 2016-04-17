@@ -37,7 +37,7 @@ public class Organizer {
     this.ioConfig = new IOConfig();
     this.relConfig = new RelationshipConfig();
     this.inputFileCount = (int) ioConfig.countInputFiles();
-    this.outputFileCount = (int) ioConfig.countOutputFiles();
+    this.outputFileCount = (int) ioConfig.countTargetFiles();
     this.display =
         new FileProgressFrame(
             "Raw Organizer",
@@ -110,7 +110,7 @@ public class Organizer {
 
     File[] fileList = null;
     try {
-      fileList = ioConfig.listOutputFiles();
+      fileList = ioConfig.listTargetFiles();
     } catch (IOException e) {
       LOG.error(e.toString());
       return;

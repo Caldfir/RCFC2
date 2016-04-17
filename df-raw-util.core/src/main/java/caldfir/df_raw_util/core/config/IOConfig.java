@@ -17,7 +17,7 @@ public class IOConfig extends Config {
 
   // specific properties being pulled from the file
   public static final String IO_INPUT_PROPERTY = "io.input";
-  public static final String IO_OUTPUT_PROPERTY = "io.output";
+  public static final String IO_TARGET_PROPERTY = "io.target";
   public static final String IO_OUTPUT_YES_PROPERTY = "io.output.yes";
   public static final String IO_OUTPUT_NO_PROPERTY = "io.output.no";
 
@@ -29,8 +29,8 @@ public class IOConfig extends Config {
     return countFiles(IO_INPUT_PROPERTY);
   }
   
-  public long countOutputFiles() {
-    return countFiles(IO_OUTPUT_PROPERTY);
+  public long countTargetFiles() {
+    return countFiles(IO_TARGET_PROPERTY);
   }
   
   public long countFiles(String key) {
@@ -45,8 +45,8 @@ public class IOConfig extends Config {
     return listFiles(IO_INPUT_PROPERTY);
   }
 
-  public File[] listOutputFiles() throws IOException {
-    return listFiles(IO_OUTPUT_PROPERTY);
+  public File[] listTargetFiles() throws IOException {
+    return listFiles(IO_TARGET_PROPERTY);
   }
 
   private File[] listFiles(String key) throws IOException {
@@ -60,7 +60,7 @@ public class IOConfig extends Config {
   }
 
   public Writer buildOutputWriter(String basename) throws IOException {
-    return buildWriter(getFileProperty(IO_OUTPUT_PROPERTY), basename);
+    return buildWriter(getFileProperty(IO_OUTPUT_YES_PROPERTY), basename);
   }
 
   public Writer buildBooleanWriter(String basename, boolean success)
