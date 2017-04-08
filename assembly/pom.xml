@@ -10,16 +10,6 @@
     <artifactId>df-raw-util</artifactId>
     <version>2.01.00-SNAPSHOT</version>
   </parent>
-  
-  <properties>
-
-    <!-- directory definitions -->
-    <main.basedir>${project.parent.basedir}</main.basedir>
-    <main.src>${main.basedir}/${subdirs.src}</main.src>
-    <main.target>${main.basedir}/${subdirs.target}</main.target>
-    <main.lib>${main.target}/${subdirs.lib}</main.lib>
-
-  </properties>
 
   <dependencies>
   

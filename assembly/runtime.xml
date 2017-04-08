@@ -9,7 +9,7 @@
     
     <!-- documentation -->
     <fileSet>
-      <directory>${main.basedir}</directory>
+      <directory>${project.parent.basedir}</directory>
       <outputDirectory>${subdirs.doc}</outputDirectory>
       <includes>
         <include>README*</include>
@@ -24,6 +24,36 @@
       <outputDirectory>.</outputDirectory>
     </fileSet>
     
+    <!-- empty workspace-dirs -->
+    <fileSet>
+      <directory>.</directory>
+      <outputDirectory>working/in/</outputDirectory>
+      <excludes>
+        <exclude>**/*</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>.</directory>
+      <outputDirectory>working/out/</outputDirectory>
+      <excludes>
+        <exclude>**/*</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>.</directory>
+      <outputDirectory>working/target/</outputDirectory>
+      <excludes>
+        <exclude>**/*</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>.</directory>
+      <outputDirectory>working/garbage/</outputDirectory>
+      <excludes>
+        <exclude>**/*</exclude>
+      </excludes>
+    </fileSet>
+    
   </fileSets>
     
   <dependencySets>
@@ -34,6 +64,7 @@
       <useProjectArtifact>false</useProjectArtifact>
       <unpack>false</unpack>
       <scope>runtime</scope>
+      <outputFileNameMapping>${artifact.artifactId}.${artifact.extension}</outputFileNameMapping>
       <includes>
         <include>*:df-raw-util-*-app</include>
       </includes>
