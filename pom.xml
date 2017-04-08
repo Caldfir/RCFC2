@@ -27,9 +27,8 @@
     <main.basedir>${project.basedir}</main.basedir>
     <main.src>${main.basedir}/${subdirs.src}</main.src>
     <main.target>${main.basedir}/${subdirs.target}</main.target>
-    <main.install>${main.target}</main.install>
-    <main.lib>${main.install}/${subdirs.lib}</main.lib>
-    <main.etc>${main.install}/${subdirs.etc}</main.etc>
+    <main.lib>${main.target}/${subdirs.lib}</main.lib>
+    <main.etc>${main.target}/${subdirs.etc}</main.etc>
 
   </properties>
 
@@ -109,6 +108,12 @@
           <version>3.0.2</version>
         </plugin>
         
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        
       </plugins>
     </pluginManagement>
 
@@ -130,7 +135,7 @@
         <inherited>true</inherited>
         <executions>
           <execution>
-            <phase>package</phase>
+            <phase>compile</phase>
             <goals>
               <goal>copy-dependencies</goal>
             </goals>
@@ -153,12 +158,12 @@
           <!-- configs go in the base directory with the jars -->
           <execution>
             <id>copy-configs</id>
-            <phase>validate</phase>
+            <phase>compile</phase>
             <goals>
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${main.install}</outputDirectory>
+              <outputDirectory>${main.target}</outputDirectory>
               <resources>
                 <resource>
                   <directory>${subdirs.config}</directory>
@@ -166,6 +171,26 @@
                 </resource>
               </resources>
             </configuration>
+          </execution>
+        </executions>
+      </plugin>
+        
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <descriptors>
+            <descriptor>assembly.xml</descriptor>
+          </descriptors>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>

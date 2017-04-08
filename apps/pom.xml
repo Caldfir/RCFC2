@@ -94,7 +94,7 @@
                   <destFileName>${project.name}.${project.packaging}</destFileName>
                 </artifactItem>
               </artifactItems>
-              <outputDirectory>${main.install}</outputDirectory>
+              <outputDirectory>${main.target}</outputDirectory>
             </configuration>
           </execution>
         </executions>
