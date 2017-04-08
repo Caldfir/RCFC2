@@ -1,6 +1,10 @@
 target/
 bin/
+.settings/
+.classpath
+.project
 *.versionsBackup
 *.class
 *.jar
+*.prefs
 *~
