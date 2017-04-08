@@ -1,14 +1,14 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+  <artifactId>df-raw-util-formatter-app</artifactId>
+  <url>http://maven.apache.org</url>
+  
   <parent>
     <groupId>caldfir</groupId>
-    <artifactId>df-raw-util.app</artifactId>
-    <version>2.00.03-SNAPSHOT</version>
+    <artifactId>df-raw-util-apps</artifactId>
+    <version>2.01.00-SNAPSHOT</version>
   </parent>
-  <artifactId>df-raw-util.app.formatter</artifactId>
-  <name>df-raw-util.app.formatter</name>
-  <url>http://maven.apache.org</url>
 
   <properties>
     <!-- directory definitions -->
