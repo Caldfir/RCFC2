@@ -10,6 +10,7 @@
     <module>model</module>
     <module>ui</module>
     <module>apps</module>
+    <module>assembly</module>
   </modules>
 
   <properties>
@@ -17,18 +18,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- subdirectory definitions -->
-    <subdirs.target>target</subdirs.target>
-    <subdirs.install>install</subdirs.install>
-    <subdirs.src>src</subdirs.src>
     <subdirs.lib>lib</subdirs.lib>
     <subdirs.config>config</subdirs.config>
-
-    <!-- directory definitions -->
-    <main.basedir>${project.basedir}</main.basedir>
-    <main.src>${main.basedir}/${subdirs.src}</main.src>
-    <main.target>${main.basedir}/${subdirs.target}</main.target>
-    <main.lib>${main.target}/${subdirs.lib}</main.lib>
-    <main.etc>${main.target}/${subdirs.etc}</main.etc>
+    <subdirs.doc>doc</subdirs.doc>
 
   </properties>
 
@@ -127,72 +119,6 @@
           <source>1.8</source>
           <target>1.8</target>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <inherited>true</inherited>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${main.lib}</outputDirectory>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <includeScope>runtime</includeScope>
-              <!--useSubDirectoryPerScope>true</useSubDirectoryPerScope -->
-              <!--stripVersion>true</stripVersion -->
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <inherited>false</inherited>
-        <executions>
-          <!-- configs go in the base directory with the jars -->
-          <execution>
-            <id>copy-configs</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${main.target}</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${subdirs.config}</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-        
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <inherited>false</inherited>
-        <configuration>
-          <descriptors>
-            <descriptor>assembly.xml</descriptor>
-          </descriptors>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
 
     </plugins>

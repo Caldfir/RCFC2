@@ -1,0 +1,55 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.0.0 http://maven.apache.org/xsd/assembly-2.0.0.xsd">
+  <id>runtime</id>
+  <formats>
+    <format>zip</format>
+    <format>dir</format>
+  </formats>
+  
+  <fileSets>
+    
+    <!-- documentation -->
+    <fileSet>
+      <directory>${main.basedir}</directory>
+      <outputDirectory>${subdirs.doc}</outputDirectory>
+      <includes>
+        <include>README*</include>
+        <include>LICENSE*</include>
+        <include>NOTICE*</include>
+      </includes>
+    </fileSet>
+  
+    <!-- configuration -->
+    <fileSet>
+      <directory>${subdirs.config}</directory>
+      <outputDirectory>.</outputDirectory>
+    </fileSet>
+    
+  </fileSets>
+    
+  <dependencySets>
+  
+    <!-- apps go in base dir -->
+    <dependencySet>
+      <outputDirectory>.</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <includes>
+        <include>*:df-raw-util-*-app</include>
+      </includes>
+    </dependencySet>
+    
+    <!-- libs go in lib dir -->
+    <dependencySet>
+      <outputDirectory>${subdirs.lib}</outputDirectory>
+      <useProjectArtifact>false</useProjectArtifact>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <excludes>
+        <exclude>*:df-raw-util-*-app</exclude>
+      </excludes>
+    </dependencySet>
+    
+  </dependencySets>
+  
+</assembly>
