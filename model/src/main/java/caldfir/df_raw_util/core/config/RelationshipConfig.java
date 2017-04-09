@@ -35,11 +35,11 @@ public class RelationshipConfig extends Config {
 
     RelationshipFileParser rfp =
         new RelationshipFileParser(
-            getString(RELATIONSHIP_DIR_NAME_PROPERTY),
-            getString(REDIRECT_FILE_NAME_PROPRERTY));
+            getProperty(RELATIONSHIP_DIR_NAME_PROPERTY),
+            getProperty(REDIRECT_FILE_NAME_PROPRERTY));
 
     RelationshipMap relFileMap = null;
-    if (getBoolean(REDIRECT_LAZY_PROPERTY)) {
+    if (getProperty(REDIRECT_LAZY_PROPERTY).equals("true")) {
       relFileMap = new LazyFileRelationshipMap(rfp);
     } else {
       try {
