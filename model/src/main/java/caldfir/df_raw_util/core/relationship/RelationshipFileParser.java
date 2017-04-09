@@ -57,7 +57,7 @@ public class RelationshipFileParser {
   }
 
   public Set<String> readChildren(String parent) throws IOException {
-    Path children = dataDir.resolve(Paths.get(parent, RELATIONSHIP_EXT));
+    Path children = dataDir.resolve(parent + RELATIONSHIP_EXT);
     return readChildren(children);
   }
 

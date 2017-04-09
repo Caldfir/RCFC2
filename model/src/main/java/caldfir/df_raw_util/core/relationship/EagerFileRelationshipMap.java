@@ -10,7 +10,7 @@ public class EagerFileRelationshipMap extends MemoryRelationshipMap {
     // initialize the dictionary
     Map<String, String> redirect = relParser.readRedirect();
     for(String parent : redirect.keySet()) {
-      addRelationships(parent, relParser.readChildren(parent));
+      addRelationships(parent, relParser.readChildren(redirect.get(parent)));
     }
   }
 
