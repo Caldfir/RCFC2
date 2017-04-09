@@ -8,13 +8,8 @@
   <parent>
     <groupId>caldfir</groupId>
     <artifactId>df-raw-util</artifactId>
-    <version>2.01.00-SNAPSHOT</version>
+    <version>2.01.00</version>
   </parent>
-
-  <properties>
-    <!-- directory definitions -->
-    <main.basedir>${project.basedir}</main.basedir>
-  </properties>
 
   <modules>
     <module>organizer</module>
@@ -37,6 +32,21 @@
       <version>${project.parent.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+
   </dependencies>
   
   <build>
@@ -57,40 +67,6 @@
             </manifestEntries>
           </archive>
         </configuration>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-artifact</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>${project.groupId}</groupId>
-                  <artifactId>${project.artifactId}</artifactId>
-                  <version>${project.version}</version>
-                  <type>${project.packaging}</type>
-                  <destFileName>${project.name}.${project.packaging}</destFileName>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${main.install}</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
 
     </plugins>

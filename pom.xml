@@ -1,158 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
   <groupId>caldfir</groupId>
   <artifactId>df-raw-util</artifactId>
-  <version>2.01.00-SNAPSHOT</version>
+  <version>2.01.00</version>
   <packaging>pom</packaging>
-
-  <name>df-raw-util</name>
-  <url>http://maven.apache.org</url>
 
   <modules>
     <module>model</module>
     <module>ui</module>
     <module>apps</module>
+    <module>assembly</module>
   </modules>
 
   <properties>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <!-- dependency versions -->
-    <junit.version>4.11</junit.version>
-    <slf4j.version>1.7.10</slf4j.version>
-    <logback.version>1.0.13</logback.version>
-    <apache.commons-io.version>2.4</apache.commons-io.version>
-    <apache.commons-collections.version>3.2.1</apache.commons-collections.version>
-
     <!-- subdirectory definitions -->
-    <subdirs.target>target</subdirs.target>
-    <subdirs.install>install</subdirs.install>
-    <subdirs.src>src</subdirs.src>
     <subdirs.lib>lib</subdirs.lib>
-    <subdirs.etc>etc</subdirs.etc>
     <subdirs.config>config</subdirs.config>
-
-    <!-- directory definitions -->
-    <main.basedir>${project.basedir}</main.basedir>
-    <main.src>${main.basedir}/${subdirs.src}</main.src>
-    <main.target>${main.basedir}/${subdirs.target}</main.target>
-    <main.install>${main.target}</main.install>
-    <main.lib>${main.install}/${subdirs.lib}</main.lib>
-    <main.etc>${main.install}/${subdirs.etc}</main.etc>
+    <subdirs.doc>doc</subdirs.doc>
 
   </properties>
 
-  <dependencies>
+  <dependencyManagement>
+    <dependencies>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.11</version>
+        <scope>test</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.7.10</version>
+        <scope>compile</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>${logback.version}</version>
-    </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>1.0.13</version>
+        <scope>runtime</scope>
+      </dependency>
 
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>${apache.commons-io.version}</version>
-    </dependency>
+      <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>2.4</version>
+        <scope>compile</scope>
+      </dependency>
+      
+      <dependency>
+        <groupId>commons-collections</groupId>
+        <artifactId>commons-collections</artifactId>
+        <version>3.2.1</version>
+        <scope>compile</scope>
+      </dependency>
 
-  </dependencies>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
+  
+    <pluginManagement>
+      <plugins>
+      
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.1</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.6.1</version>
+        </plugin>
+      
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+      
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+        
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+        
+      </plugins>
+    </pluginManagement>
 
     <plugins>
 
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>versions-maven-plugin</artifactId>
-        <version>2.1</version>
-      </plugin>
-
-      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
+        <inherited>true</inherited>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
         </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${main.lib}</outputDirectory>
-              <overWriteIfNewer>true</overWriteIfNewer>
-              <!--useSubDirectoryPerScope>true</useSubDirectoryPerScope -->
-              <!--stripVersion>true</stripVersion -->
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>2.7</version>
-        <executions>
-
-          <!-- generic data goes in the etc directory -->
-          <execution>
-            <id>copy-etc</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${main.etc}</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${subdirs.etc}</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-
-          <!-- configs go in the base directory with the jars -->
-          <execution>
-            <id>copy-configs</id>
-            <phase>validate</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${main.install}</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${subdirs.config}</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-
-        </executions>
       </plugin>
 
     </plugins>
