@@ -1,4 +1,4 @@
-Dwarf Fortress Raw Utilities v2.00.03 2016-04-17
+Dwarf Fortress Raw Utilities v2.01.01 TBD
 
 Requirements:
 
@@ -23,9 +23,14 @@ Take the DF raw files you want processed and put them into the working/in direct
 
 Changelog:
 
-2.00.03:-first released version
+2.01.01:
+    -updated tags
+
+2.00.03:
+    -first released version
 		-support for "formatter" and "organizer"
 
-2.00.01:-initial baseline (follows 1.33)
+2.00.01:
+    -initial baseline (follows 1.33)
 		-new core parsing engine with much lower memory footprint
 		-not all functionality from 1.* versions available

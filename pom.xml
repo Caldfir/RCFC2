@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>caldfir</groupId>
   <artifactId>df-raw-util</artifactId>
-  <version>2.01.00</version>
+  <version>2.01.01-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>
