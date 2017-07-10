@@ -10,15 +10,17 @@ public class XmlTagComposer implements Closeable {
   public static final String XML_HEADER =
       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>";
 
-  private FormatWriter writer;
+  private final FormatWriter writer;
+  private int titleDepth;
 
   public XmlTagComposer(FormatWriter writer) {
     this.writer = writer;
+    this.titleDepth = 1;
   }
 
   public void compose(TagNode root) throws IOException {
     writeHeader(root);
-    writeTag(root);
+    writeTag(root, 0);
   }
 
   public void writeHeader(TagNode root) throws IOException {
@@ -26,20 +28,25 @@ public class XmlTagComposer implements Closeable {
     writer.newline();
   }
 
-  public void writeTag(TagNode tag) throws IOException {
+  public void writeTag(TagNode tag, int depth) throws IOException {
+    // if this is a "title" then add some whitespace
+    if (depth <= titleDepth) {
+      writer.newline();
+    }
+
     // write the start-tag
-    writer.indent(tag.getDepth());
+    writer.indent(depth);
     writeTagBody(tag, false);
     writer.newline();
 
     // recurse on children
     for (int i = 0; i < tag.getNumChildren(); i++) {
-      writeTag(tag.getChild(i));
+      writeTag(tag.getChild(i), depth + 1);
     }
 
     // write the end-tag
     if (tag.getNumChildren() > 0) {
-      writer.indent(tag.getDepth());
+      writer.indent(depth);
       writeTagBody(tag, true);
       writer.newline();
     }

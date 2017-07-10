@@ -78,8 +78,7 @@ public class Organizer {
             new RawTagComposer(
                 ioConfig.buildBooleanWriter(shortName, false),
                 shortName);
-        composer.writeHeader(root);
-        composer.writeTag(root);
+        composer.compose(root);
       } catch (IOException e) {
         LOG.error(e.toString());
       } finally {
@@ -149,8 +148,7 @@ public class Organizer {
             new RawTagComposer(
                 ioConfig.buildBooleanWriter(shortName, true),
                 shortName);
-        composer.writeHeader(root);
-        composer.writeTag(root);
+        composer.compose(root);
       } catch (IOException e) {
         LOG.error(e.toString());
       } finally {
