@@ -22,7 +22,7 @@ public class RawTagComposer extends TagComposer {
     writeNewline();
     
     for(int i = 0; i < root.getNumChildren(); i++) {
-      writeIndent(1);
+      writeIndent();
       writeString(root.getChild(i).getArgument(1));
       writeNewline();
     }
@@ -32,7 +32,7 @@ public class RawTagComposer extends TagComposer {
   @Override
   public void writeTag(TagNode tag) throws IOException {
     // write this tag's content
-    writeIndent(tag.getDepth());
+    writeIndent(tag);
     writeString(buildString(tag));
     writeNewline();
     

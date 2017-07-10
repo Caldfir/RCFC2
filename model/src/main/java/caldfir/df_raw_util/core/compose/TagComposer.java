@@ -9,36 +9,51 @@ import caldfir.df_raw_util.core.primitives.TagNode;
 public abstract class TagComposer implements Closeable {
 
   private final Writer writer;
-  
-  public TagComposer( Writer writer ) {
+  private static final String INDENT = "\t";
+
+  public TagComposer(Writer writer) {
     this.writer = writer;
   }
 
   public abstract void writeHeader(TagNode root) throws IOException;
-  
+
   public abstract void writeTag(TagNode tag) throws IOException;
-  
+
   public void compose(TagNode root) throws IOException {
     writeHeader(root);
     writeTag(root);
   }
-  
-  @Override
-  public void close() throws IOException {
-    writer.close();
-  }
-  
+
   protected void writeString(String s) throws IOException {
     writer.write(s);
   }
-  
+
   protected void writeNewline() throws IOException {
-    writer.write(System.lineSeparator());
+    writeNewline(1);
+  }
+
+  protected void writeNewline(int depth) throws IOException {
+    for (int i = 0; i < depth; i++) {
+      writer.write(System.lineSeparator());
+    }
+  }
+
+  protected void writeIndent() throws IOException {
+    writeIndent(1);
+  }
+
+  protected void writeIndent(TagNode tag) throws IOException {
+    writeIndent(tag.getDepth());
   }
 
   protected void writeIndent(int depth) throws IOException {
-    for( int i = 0; i < depth; i++ ) {
-      writer.write('\t');
+    for (int i = 0; i < depth; i++) {
+      writer.write(INDENT);
     }
+  }
+
+  @Override
+  public void close() throws IOException {
+    writer.close();
   }
 }
