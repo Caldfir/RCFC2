@@ -25,6 +25,8 @@ Changelog:
 
 2.01.01:
     -updated tags
+    -added newlines between "title" tags
+    -indent/newline string configurable
 
 2.00.03:
     -first released version
