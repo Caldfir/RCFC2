@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import caldfir.df_raw_util.app.filter.TagArg1ChildFilter;
 import caldfir.df_raw_util.core.compose.RawTagComposer;
-import caldfir.df_raw_util.core.compose.TagComposer;
 import caldfir.df_raw_util.core.config.IOConfig;
 import caldfir.df_raw_util.core.config.RelationshipConfig;
 import caldfir.df_raw_util.core.parse.RawTagParser;
@@ -72,7 +71,7 @@ public class Organizer {
       }
 
       String shortName = root.getArgument(1) + ".txt";
-      TagComposer composer = null;
+      RawTagComposer composer = null;
       root.sortChildren(new TagArgComparator());
       try {
         composer =
@@ -143,7 +142,7 @@ public class Organizer {
 
       display.set("writing " + shortName, inputFileCount + i + 1);
 
-      TagComposer composer = null;
+      RawTagComposer composer = null;
       root.sortChildren(new TagArgComparator());
       try {
         composer =

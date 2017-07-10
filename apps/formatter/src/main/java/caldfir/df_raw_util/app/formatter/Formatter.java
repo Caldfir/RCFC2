@@ -2,14 +2,12 @@ package caldfir.df_raw_util.app.formatter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import caldfir.df_raw_util.core.compose.RawTagComposer;
-import caldfir.df_raw_util.core.compose.TagComposer;
 import caldfir.df_raw_util.core.config.IOConfig;
 import caldfir.df_raw_util.core.config.RelationshipConfig;
 import caldfir.df_raw_util.core.parse.RawTagParser;
@@ -56,17 +54,19 @@ public class Formatter {
       } finally {
         try {
           parser.close();
-        } catch (IOException e){
+        } catch (IOException e) {
           // no-op
         }
       }
 
       // write
       display.set("writing " + shortName, 2 * i);
-      TagComposer composer = null;
+      RawTagComposer composer = null;
       try {
-        Writer w = ioConfig.buildOutputWriter(shortName);
-        composer = new RawTagComposer(w,shortName);
+        composer =
+            new RawTagComposer(
+                ioConfig.buildOutputWriter(shortName),
+                shortName);
         composer.compose(root);
       } catch (IOException e) {
         LOG.error(e.toString());
@@ -79,7 +79,7 @@ public class Formatter {
         }
       }
     }
-    
+
     display.setVisible(false);
   }
 }

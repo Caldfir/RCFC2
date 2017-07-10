@@ -1,32 +1,36 @@
 package caldfir.df_raw_util.core.compose;
 
+import java.io.Closeable;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
 
 import caldfir.df_raw_util.core.primitives.TagNode;
 
-public class XmlTagComposer extends TagComposer {
+public class XmlTagComposer implements Closeable {
 
   public static final String XML_HEADER =
       "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>";
 
-  public XmlTagComposer(Writer writer) {
-    super(writer);
-  }
-  
-  @Override
-  public void writeHeader(TagNode root) throws IOException{
-    writeString(XML_HEADER);
-    writeNewline();
+  private FormatWriter writer;
+
+  public XmlTagComposer(FormatWriter writer) {
+    this.writer = writer;
   }
 
-  @Override
+  public void compose(TagNode root) throws IOException {
+    writeHeader(root);
+    writeTag(root);
+  }
+
+  public void writeHeader(TagNode root) throws IOException {
+    writer.write(XML_HEADER);
+    writer.newline();
+  }
+
   public void writeTag(TagNode tag) throws IOException {
     // write the start-tag
-    writeIndent(tag.getDepth());
-    writeString(buildString(tag, false));
-    writeNewline();
+    writer.indent(tag.getDepth());
+    writeTagBody(tag, false);
+    writer.newline();
 
     // recurse on children
     for (int i = 0; i < tag.getNumChildren(); i++) {
@@ -35,42 +39,43 @@ public class XmlTagComposer extends TagComposer {
 
     // write the end-tag
     if (tag.getNumChildren() > 0) {
-      writeIndent(tag.getDepth());
-      writeString(buildString(tag, true));
-      writeNewline();
+      writer.indent(tag.getDepth());
+      writeTagBody(tag, true);
+      writer.newline();
     }
   }
 
-  protected String buildString(TagNode tag, boolean endTag) {
-    StringWriter strWrite = new StringWriter();
-    strWrite.write('<');
+  protected void writeTagBody(TagNode tag, boolean endTag) throws IOException {
+    writer.write('<');
 
     // if the is an end-tag then write the endtag marker
     if (endTag) {
-      strWrite.write('/');
+      writer.write('/');
     }
 
     // write the tag name
-    strWrite.write(tag.tagName());
+    writer.write(tag.tagName());
 
     // only start-tags have arguments or a oneline marker
     if (!endTag) {
       // write the children
       for (int i = 0; i < tag.getNumChildren(); i++) {
-        strWrite.write(" arg");
-        strWrite.write(i);
-        strWrite.write('=');
-        strWrite.write(tag.getArgument(i));
+        writer.write(" arg");
+        writer.write(i);
+        writer.write('=');
+        writer.write(tag.getArgument(i));
       }
       // if no children then write a oneline marker
       if (tag.getNumChildren() == 0) {
-        strWrite.write('/');
+        writer.write('/');
       }
     }
 
-    strWrite.write('>');
-
-    return strWrite.toString();
+    writer.write('>');
   }
 
+  @Override
+  public void close() throws IOException {
+    writer.close();
+  }
 }

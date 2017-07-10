@@ -4,11 +4,12 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.apache.commons.io.FilenameUtils;
+
+import caldfir.df_raw_util.core.compose.FormatWriter;
 
 public class IOConfig extends Config {
 
@@ -21,18 +22,21 @@ public class IOConfig extends Config {
   public static final String IO_OUTPUT_YES_PROPERTY = "io.output.yes";
   public static final String IO_OUTPUT_NO_PROPERTY = "io.output.no";
 
+  public static final String FORMAT_INDENT = "format.indent";
+  public static final String FORMAT_NEWLINE = "format.newline";
+
   public IOConfig() {
     super(CORE_RESOURCE_NAME);
   }
-  
+
   public long countInputFiles() {
     return countFiles(IO_INPUT_PROPERTY);
   }
-  
+
   public long countTargetFiles() {
     return countFiles(IO_TARGET_PROPERTY);
   }
-  
+
   public long countFiles(String key) {
     try {
       return Files.list(Paths.get(getFileProperty(key))).count();
@@ -59,25 +63,29 @@ public class IOConfig extends Config {
     return folder.listFiles();
   }
 
-  public Writer buildOutputWriter(String basename) throws IOException {
+  public FormatWriter buildOutputWriter(String basename) throws IOException {
     return buildWriter(getFileProperty(IO_OUTPUT_YES_PROPERTY), basename);
   }
 
-  public Writer buildBooleanWriter(String basename, boolean success)
+  public FormatWriter buildBooleanWriter(String basename, boolean success)
       throws IOException {
     String successProperty =
         success ? IO_OUTPUT_YES_PROPERTY : IO_OUTPUT_NO_PROPERTY;
     return buildWriter(getFileProperty(successProperty), basename);
   }
 
-  private Writer buildWriter(String pathname, String basename)
+  private FormatWriter buildWriter(String pathname, String basename)
       throws IOException {
     File toWrite = new File(FilenameUtils.concat(pathname, basename));
-    BufferedWriter writer = new BufferedWriter(new FileWriter(toWrite));
-
+    FormatWriter writer =
+        new FormatWriter(new BufferedWriter(new FileWriter(toWrite)));
+    String indent = getFileProperty(FORMAT_INDENT);
+    writer.setIndent(indent != null ? indent : "\t");
+    String newline = getFileProperty(FORMAT_NEWLINE);
+    writer.setNewline(newline != null ? newline : System.lineSeparator());
     return writer;
   }
-  
+
   private String getFileProperty(String key) {
     return FilenameUtils.normalize(getProperty(key));
   }
